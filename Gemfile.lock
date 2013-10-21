@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    believer (0.1.1)
+    believer (0.1.2)
       activemodel (= 3.2.13)
       cql-rb (= 1.1.0.pre6)
 
