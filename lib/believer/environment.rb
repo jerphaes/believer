@@ -42,7 +42,7 @@ module Believer
       end
 
       def connection_configuration
-        @connection_configuration ||= configuration.reject_if {|k, v| k == :pool}
+        @connection_configuration ||= configuration.reject {|k, v| k == :pool}
       end
 
       def create_connection(options = {})
