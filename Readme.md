@@ -44,18 +44,13 @@ This is the class you should extend from.
 #### The column class method
 Defines the mapping between a Ruby object attribute and a Cassandra column. Also defines a getter and setter attribute with the same name.
 The second argument is a Hash, which support the following keys:
-* type: the data type. Supported are:
-** :string, the default string type
-** :integer
-** :float
-** :timestamp
-
+* type: the data type. Supported are: :string, :integer, :float, :timestamp
 
 
 #### The primary_key class method
 Sets the primary key columns of the class.
 In a situation where you're only querying data, you don't need to set this.
-However, if you rely on object equality somewhere in your application, it is advisable to set the primary key.
+However, if you rely on object equality somewhere in your application, it is advisable to set the primary key, as the primary key values are used in the Believer::Base.eql? method.
 
 ### Query your class
 The following methods can be used to query class instances.
@@ -110,4 +105,28 @@ This is done by creating and returning a clone of the receiver. The clone is the
 
     # 'Echoes'....
     Song.where(:artist => 'Pink Floyd').where(:album => 'Meddle').order(:track_number, :desc).limit(1)
+
+### Configuration
+If using Rails, place a believer.yml file in the configuration directory of your application.
+The file structure starts with the the environment name, followed by the connection configuration.
+This is the client connection configuration passed to the cql-rb gem.
+
+    development:
+        host: 127.0.0.1
+        port: 9042
+        keyspace: my_keyspace
+
+    staging:
+        host: 'staging.mynetwork.local'
+        port: 9042
+        keyspace: my_keyspace
+        credentials:
+            username: john
+            password: $FDFD%@#&*
+
+
+In other cases, you will have to programatically set the environment:
+
+    Believer::Base.environment = Believer::Environment::BaseEnv.new(:host => '127.0.0.1', :keyspace => 'mykeyspace')
+
 

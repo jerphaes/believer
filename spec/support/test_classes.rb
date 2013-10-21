@@ -51,8 +51,9 @@ module Test
     @env ||= Environment.new
   end
 
+  Believer::Base.environment = test_environment
   CLASSES = [Processor, Computer, Event, Person]
-  CLASSES.each {|cl| cl.environment = test_environment}
+  #CLASSES.each {|cl| cl.environment = test_environment}
 
   def self.classes
     CLASSES
