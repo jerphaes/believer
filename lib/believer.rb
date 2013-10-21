@@ -14,6 +14,7 @@ require 'cql/client'
 require 'yaml'
 
 require 'believer/environment.rb'
+require 'believer/environment/rails_env'
 require 'believer/connection.rb'
 require 'believer/values.rb'
 require 'believer/columns.rb'

@@ -1,3 +1,5 @@
+#require "believer/environment/rails_env"
+
 module Believer
   module Environment
     extend ::ActiveSupport::Concern
@@ -6,8 +8,8 @@ module Believer
 
       def environment
         if @environment.nil?
-          if defined?(Rails)
-            @environment = RailsEnvironment.new
+          if defined?(::Rails)
+            @environment = ::Believer::Environment::RailsEnv.new
           end
         end
         @environment
@@ -19,7 +21,11 @@ module Believer
 
     end
 
-    class Base
+    class BaseEnv
+      #def connection_configuration
+      #  {:host => '127.0.0.1'}
+      #end
+
       def create_connection(options = {})
         cc = connection_configuration
 

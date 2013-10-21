@@ -41,7 +41,7 @@ module Test
 
   end
 
-  class Environment < Believer::Environment::Base
+  class Environment < Believer::Environment::BaseEnv
     def connection_configuration
       {:host => '127.0.0.1', :keyspace => 'believer_test_space'}
     end

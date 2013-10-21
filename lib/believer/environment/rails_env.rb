@@ -1,7 +1,7 @@
 
 module Believer
   module Environment
-    class RailsEnvironment < Base
+    class RailsEnv < Believer::Environment::BaseEnv
 
       def connection_configuration
         unless @connection_configuration
