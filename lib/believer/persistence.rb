@@ -2,7 +2,7 @@ module Believer
 
   module Persistence
 
-    extend ActiveSupport::Concern
+    extend ::ActiveSupport::Concern
 
     module ClassMethods
 

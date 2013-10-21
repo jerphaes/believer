@@ -1,6 +1,6 @@
 module Believer
   module Querying
-    delegate :select, :where, :order, :to => :scoped
+    delegate :select, :where, :order, :limit, :to => :scoped
 
   end
 end

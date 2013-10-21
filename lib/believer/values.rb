@@ -8,8 +8,8 @@ module Believer
       return 'NULL' if value.nil?
       return "'#{value}'" if value.is_a?(String)
       return "#{value}" if value.is_a?(Numeric)
-      #return "'#{value.strftime(TIMESTAMP_FORMAT)}'" if value.is_a?(Time) || value.is_a?(DateTime)
-      return "#{value.to_i * 1000}" if value.is_a?(Time) || value.is_a?(DateTime)
+      return "'#{value.strftime(TIMESTAMP_FORMAT)}'" if value.is_a?(Time) || value.is_a?(DateTime)
+      #return "#{value.to_i * 1000}" if value.is_a?(Time) || value.is_a?(DateTime)
       return nil
     end
 

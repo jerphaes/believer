@@ -26,9 +26,9 @@ module Believer
       cql = to_cql
       begin
         start = Time.now
-        Rails.logger.debug "Executing #{cql}"
+        puts "Executing #{cql}"
         res = connection.execute(cql)
-        Rails.logger.debug "#{name} #{sprintf "%.3f", (Time.now - start)*1000.0} ms: #{cql}"
+        #Rails.logger.debug "#{name} #{sprintf "%.3f", (Time.now - start)*1000.0} ms: #{cql}"
         return res
       rescue Cql::Protocol::DecodingError => e
         # Decoding errors tend to #$%# up the connection, resulting in no more activity, so a reconnect is performed here.

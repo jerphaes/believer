@@ -3,6 +3,8 @@ module Believer
 
     attr_accessor :record_class, :selects, :order_by, :limit_to
 
+    delegate *(Enumerable.instance_methods(false).map {|enum_method| enum_method.to_sym}), :to => :to_a
+
     def initialize(attrs)
       super
     end
@@ -47,6 +49,7 @@ module Believer
         cql << "#{@selects.join(', ')}"
       else
         cql << @record_class.columns.keys.join(',')
+        #cql << "*"
       end
 
       cql << " FROM #{@record_class.table_name}"
@@ -89,7 +92,7 @@ module Believer
         result.each do |row|
           @result_rows << @record_class.instantiate_from_result_rows(row)
         end
-        Rails.logger.debug "Took #{sprintf "%.3f", (Time.now - start)*1000.0} ms to deserialize #{@result_rows.size} object(s)"
+        puts "Took #{sprintf "%.3f", (Time.now - start)*1000.0} ms to deserialize #{@result_rows.size} object(s)"
       end
       @result_rows
     end
@@ -121,10 +124,12 @@ module Believer
     end
 
     def first
+      return @result_rows.first unless @result_rows.nil?
       clone.limit(1)[0]
     end
 
     def last
+      return @result_rows.last unless @result_rows.nil?
       raise "Cannot retrieve last of no order column is set" if @order_by.nil?
       lq = clone.limit(1)
       lq.order_by = @order_by.inverse

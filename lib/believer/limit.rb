@@ -4,7 +4,6 @@ module Believer
     attr_reader :size
 
     def initialize(l)
-      raise "Invalid limit: #{l}" if !l.is_a?(Numeric) || l <= 0
       @size = l.to_i
     end
 

@@ -1,7 +1,7 @@
 module Believer
 
   module Scoping
-    extend ActiveSupport::Concern
+    extend ::ActiveSupport::Concern
 
     module ClassMethods
 

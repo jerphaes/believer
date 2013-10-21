@@ -1,8 +1,4 @@
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
-gem 'activemodel', '3.2.13'
-gem 'cql-rb', '1.1.0.pre6'
-
-group :test, :development do
-  gem 'rspec'
-end
+# Specify your gem's dependencies in believer.gemspec
+gemspec

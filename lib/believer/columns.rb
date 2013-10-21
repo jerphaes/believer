@@ -2,7 +2,7 @@ module Believer
 
   # Defines methods for dealing with model attributes.
   module Columns
-    extend ActiveSupport::Concern
+    extend ::ActiveSupport::Concern
 
     included do
       include Values
@@ -19,6 +19,40 @@ module Believer
 
     end
 
+    class Column
+      CQL_COL_TYPES = {
+          :integer => 'INT',
+          :string => 'VARCHAR',
+          :timestamp => 'TIMESTAMP',
+          :float => 'FlOAT'
+      }
+
+      attr_reader :name, :type
+
+      def initialize(opts)
+        @name = opts[:name]
+        @type = opts[:type]
+        raise "Invalid column type #{@type}" unless CQL_COL_TYPES.has_key?(@type)
+        @key = opts[:key] == true || !opts[:key].nil?
+        if @key && opts[:key].is_a?(Hash)
+          @partition_key = opts[:key][:partition_key]
+        end
+      end
+
+      def cql_column_type
+        CQL_COL_TYPES[@type]
+      end
+
+      def is_key?
+        @key
+      end
+
+      def is_partition_key?
+        @partition_key
+      end
+
+    end
+
     module ClassMethods
 
       # Returns all columns on the model
@@ -27,15 +61,15 @@ module Believer
         @columns ||= {}
       end
 
-      # Defines a column on the model.
+        # Defines a column on the model.
       # The column name must correspond with the Cassandra column name
       def column(name, opts = {})
         defaults = {
             :type => :string
         }
-        options = opts.merge(defaults)
+        options = defaults.merge(opts).merge(:name => name)
 
-        columns[name] = options
+        columns[name] = Column.new(options)
 
         self.redefine_method(name) do
           read_attribute(name)
@@ -46,13 +80,32 @@ module Believer
         end
       end
 
-      def primary_key(*columns)
-        @primary_key_columns = columns
+      def primary_key(*cols)
+        @primary_key = *cols
+      end
+
+      def get_primary_key
+        @primary_key.dup
       end
 
       def primary_key_columns
-        @primary_key_columns
+        @primary_key.flatten
       end
+
+      def partition_key
+        @primary_key.first.dup
+      end
+
+      def partition_keys
+        part_key = partition_key
+        return part_key.dup if part_key.is_a?(Enumerable)
+        [part_key]
+      end
+
+      def has_compound_key?
+        @primary_key.size > 1
+      end
+
 
     end
 
@@ -78,7 +131,7 @@ module Believer
       v = value
       # Convert the value to the actual type
       unless v.nil? && self.class.columns[attr_name]
-        value_type = self.class.columns[attr_name][:type]
+        value_type = self.class.columns[attr_name].type
         convert_method = "convert_to_#{value_type}".to_sym
         v = self.send(convert_method, v) if respond_to?(convert_method)
       end

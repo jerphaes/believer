@@ -1,6 +1,8 @@
+require 'active_model/observing'
+
 module Believer
 
-  class Observer < ActiveModel::Observer
+  class Observer < ::ActiveModel::Observer
 
     protected
 

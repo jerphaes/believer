@@ -1,6 +1,6 @@
 module Believer
   module Owner
-    extend ActiveSupport::Concern
+    extend ::ActiveSupport::Concern
 
     module ClassMethods
       def cql_record_relations

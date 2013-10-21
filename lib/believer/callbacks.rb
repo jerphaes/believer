@@ -1,3 +1,6 @@
+require 'active_model/callbacks'
+require 'active_model/validations/callbacks'
+
 module Believer
   # = Record Callbacks
   #
@@ -234,10 +237,10 @@ module Believer
     extend ActiveSupport::Concern
 
     CALLBACKS = [
-        :after_initialize, :after_find, :after_touch, :before_validation, :after_validation,
+        :after_initialize, :before_validation, :after_validation,
         :before_save, :around_save, :after_save, :before_create, :around_create,
         :after_create, :before_update, :around_update, :after_update,
-        :before_destroy, :around_destroy, :after_destroy, :after_commit, :after_rollback
+        :before_destroy, :around_destroy, :after_destroy
     ]
 
     included do
@@ -246,6 +249,10 @@ module Believer
 
       define_model_callbacks :initialize, :only => :after
       define_model_callbacks :save, :create, :update, :destroy
+    end
+
+    def initialize#:nodoc:
+      run_callbacks(:initialize) { super }
     end
 
     def destroy #:nodoc:
