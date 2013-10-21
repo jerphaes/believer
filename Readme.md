@@ -5,7 +5,7 @@ Believer is an Object Relational Mapping library for CQL3
     gem install believer
 
 ## Inspiration
-The Believer library is heavily inspired by ActiveRecord. Most patterns used in this library should be pretty familiar for ActiveRecord user.
+The Believer library is heavily inspired by ActiveRecord. Most patterns used in this library should be pretty familiar for ActiveRecord users.
 
 ## Usage
 
@@ -21,7 +21,7 @@ An example:
         primary_key :name
     end
 
-    class Album
+    class Album < Believer::Base
         column :artist
         column :name
         column :release_date, :type => :timestamp
@@ -29,7 +29,7 @@ An example:
         primary_key :artist, :name
     end
 
-    class Song
+    class Song < Believer::Base
         column :artist
         column :album
         column :name
@@ -44,7 +44,12 @@ This is the class you should extend from.
 #### The column class method
 Defines the mapping between a Ruby object attribute and a Cassandra column. Also defines a getter and setter attribute with the same name.
 The second argument is a Hash, which support the following keys:
-* type: the data type
+* type: the data type. Supported are:
+** :string, the default string type
+** :integer
+** :float
+** :timestamp
+
 
 
 #### The primary_key class method
