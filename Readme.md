@@ -131,11 +131,11 @@ Song.where(:artist => 'Pink Floyd').where(:album => 'Meddle').order(:track_numbe
 ```
 
 ### Configuration
-If using Rails, place a believer.yml file in the configuration directory of your application.
+If using Rails or Merb, place a believer.yml file in the configuration directory of your application.
 The file structure starts with the the environment name, followed by the connection configuration.
 This is the client connection configuration passed to the cql-rb gem.
 
-``` yaml
+``` yml
 development:
     host: 127.0.0.1
     port: 9042
