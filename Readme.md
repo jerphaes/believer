@@ -12,32 +12,34 @@ The Believer library is heavily inspired by ActiveRecord. Most patterns used in 
 ### Define your class
 An example:
 
-    require 'believer'
+``` ruby
+require 'believer'
 
-    class Artist < Believer::Base
-        column :name
-        column :label
+class Artist < Believer::Base
+    column :name
+    column :label
 
-        primary_key :name
-    end
+    primary_key :name
+end
 
-    class Album < Believer::Base
-        column :artist
-        column :name
-        column :release_date, :type => :timestamp
+class Album < Believer::Base
+    column :artist
+    column :name
+    column :release_date, :type => :timestamp
 
-        primary_key :artist, :name
-    end
+    primary_key :artist, :name
+end
 
-    class Song < Believer::Base
-        column :artist
-        column :album
-        column :name
-        column :track_number, :type => :integer
-        column :data, :cql_type => :blob
+class Song < Believer::Base
+    column :artist
+    column :album
+    column :name
+    column :track_number, :type => :integer
+    column :data, :cql_type => :blob
 
-        primary_key :artist, :album, :name
-    end
+    primary_key :artist, :album, :name
+end
+```
 
 #### The Believer::Base class
 This is the class you should extend from.
@@ -56,11 +58,13 @@ However, if you rely on object equality somewhere in your application, it is adv
 
 If you wish to use a partition key consisting of multiple columns, use an array as the first part of the primary_key list:
 
-    class Song
-        ...
-        primary_key [:artist, :album], :name, :...
-        ...
-    end
+``` ruby
+class Song
+    ...
+    primary_key [:artist, :album], :name, :...
+    ...
+end
+```
 
 ### Query your class
 The following methods can be used to query class instances.
@@ -74,97 +78,116 @@ All methods are chainable, meaning you can
 #### The where method
 Use the where method to specify filters on the result set. These filters correspond to the expressions in the WHERE clause of a Cassandra query.
 
-    # Using a hash
-    Artist.where(:name => 'James Brown')
+``` ruby
+# Using a hash
+Artist.where(:name => 'James Brown')
 
-    # Using a hash mapping key to an array of possible values. Maps to the CQL IN operator
-    Artist.where(:name => ['Coldplay', 'Depeche Mode', 'Eurythmics'])
+# Using a hash mapping key to an array of possible values. Maps to the CQL IN operator
+Artist.where(:name => ['Coldplay', 'Depeche Mode', 'Eurythmics'])
 
-    # Using string with interpolation
-    Artist.where('name = ?', 'Foreigner')
+# Using string with interpolation
+Artist.where('name = ?', 'Foreigner')
+```
 
 #### The select method
 Using the select method you can define the columns loaded in a query. These fields correspond to the expressions in the SELECT clause of a Cassandra query.
 This might be handy in the case you have a table with a lot of columns, but only need a few.
 
-    # Select a single field
-    Artist.select(:name)
+``` ruby
+# Select a single field
+Artist.select(:name)
 
-    # Select a multiple fields
-    Artist.select(:name, :label)
+# Select a multiple fields
+Artist.select(:name, :label)
+```
 
 #### The limit method
 Limits the amount of records returned to the specified maximum
 
-    # Yield at most 20 class instances
-    Artist.limit(20)
+``` ruby
+# Yield at most 20 class instances
+Artist.limit(20)
+```
 
 #### The order method
 Order the results in using the specified column
 
-    # Order ascending by name
-    Album.order(:name)
-    Album.order(:name, :asc)
+``` ruby
+# Order ascending by name
+Album.order(:name)
+Album.order(:name, :asc)
 
-    # Order descending by name
-    Album.order(:name, :desc)
+# Order descending by name
+Album.order(:name, :desc)
+```
 
 #### Method chaining
 All query methods can be chained.
 This is done by creating and returning a clone of the receiver. The clone is the receiver of the query method.
 
-    # 'Echoes'....
-    Song.where(:artist => 'Pink Floyd').where(:album => 'Meddle').order(:track_number, :desc).limit(1)
+``` ruby
+# 'Echoes'....
+Song.where(:artist => 'Pink Floyd').where(:album => 'Meddle').order(:track_number, :desc).limit(1)
+```
 
 ### Configuration
 If using Rails, place a believer.yml file in the configuration directory of your application.
 The file structure starts with the the environment name, followed by the connection configuration.
 This is the client connection configuration passed to the cql-rb gem.
 
-    development:
-        host: 127.0.0.1
-        port: 9042
-        keyspace: my_keyspace
+``` yaml
+development:
+    host: 127.0.0.1
+    port: 9042
+    keyspace: my_keyspace
 
-    staging:
-        host: 'staging.mynetwork.local'
-        port: 9042
-        keyspace: my_keyspace
-        credentials:
-            username: john
-            password: $FDFD%@#&*
-
+staging:
+    host: 'staging.mynetwork.local'
+    port: 9042
+    keyspace: my_keyspace
+    credentials:
+        username: john
+        password: $FDFD%@#&*
+```
 
 In other cases, you will have to programatically set the environment:
 
-    Believer::Base.environment = Believer::Environment::BaseEnv.new(:host => '127.0.0.1',
-                                                                    :keyspace => 'mykeyspace')
+``` ruby
+Believer::Base.environment = Believer::Environment::BaseEnv.new(:host => '127.0.0.1',
+                                                                :keyspace => 'mykeyspace')
+```
+
 ### Connection pooling
 If you wish to use a pool of connections, include a :pool node to the configuration.
 The pool library used is [connection_pool](https://github.com/mperham/connection_pool).
 
-    development:
-        host: 127.0.0.1
-        port: 9042
-        keyspace: my_keyspace
-        pool:
-            size: 10
-            timeout: 5
+``` yaml
+development:
+    host: 127.0.0.1
+    port: 9042
+    keyspace: my_keyspace
+    pool:
+        size: 10
+        timeout: 5
+```
 
 ## Callbacks
 The Believer::Base supports several callbacks to hook into the lifecycle of the models.
 These callbacks can be included in the body of a Believer::Base subclass, like so:
-    class Song < Believer::Base
-        after_save :do_something
 
-        before_destroy do
-            puts "About to be destroyed: #{self}"
-        end
+``` ruby
+class Song < Believer::Base
+    after_save :do_something
 
-        def do_something
-            puts "Just been saved: #{self}"
-        end
+    before_destroy do
+        puts "About to be destroyed: #{self}"
     end
+
+    def do_something
+        puts "Just been saved: #{self}"
+    end
+end
+```
 
 Supported callbacks are:
 * after_initialize
@@ -180,7 +203,7 @@ If you include Believer::Relation in any class, you can define a relation betwee
 
 Supported relations are:
 * one-to-one: use the has_single method in the referencing class
-* one-to-many: use the has_single method in the referencing class
+* one-to-many: use the has_some method in the referencing class
 
 Options for both relations are:
 * :class the name of the referenced class. If nil, it will be created from the relation name. Can be a constant or a String
@@ -190,28 +213,29 @@ Options for both relations are:
 
 Example(s):
 
-  class Artist
+``` ruby
+class Artist
     include Believer::Relation
 
     attr_accessor :name
 
     has_some :albums, :class => 'Album', :key => :name, :foreign_key => :artist_name
-  end
+end
 
-  class Album < Believer::Base
+class Album < Believer::Base
     column :artist_name
     column :name
-  end
+end
 
-  class Song < Believer::Base
+class Song < Believer::Base
     include Believer::Relation
 
     column :artist_name
     column :album_name
 
     has_single :album, :class => 'Test::Album', :key => [:artist_name, :album_name], :foreign_key => [:artist_name, :name]
-  end
-
+end
+```
 
 ## Test support
 An important aspect to note is that Cassandra does not support transactional rollbacks.
