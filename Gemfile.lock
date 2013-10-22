@@ -2,9 +2,9 @@ PATH
   remote: .
   specs:
     believer (0.2)
-      activemodel (= 3.2.13)
+      activemodel
       connection_pool
-      cql-rb (= 1.1.0.pre6)
+      cql-rb
 
 GEM
   remote: https://rubygems.org/
@@ -42,4 +42,4 @@ DEPENDENCIES
   believer!
   rake
   rspec
-  simplecov (= 0.7.1)
+  simplecov
