@@ -1,16 +1,23 @@
 module Believer
+  # A command implementation which includes a CQL WHERE clause
   class ScopedCommand < Command
-
-    attr_accessor :wheres
 
     def query_attributes
       attrs = super
-      attrs.merge(:wheres => @wheres)
+      attrs.merge(:wheres => (wheres.dup))
+    end
+
+    def wheres
+      #puts "Wheres: #{@wheres}"
+      @wheres ||= []
+    end
+
+    def wheres=(w)
+      @wheres = w.is_a?(Array) ? w : [w]
     end
 
     def where(*args)
       q = clone
-      q.wheres ||= []
       q.wheres << WhereClause.new(*args)
       q
     end

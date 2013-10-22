@@ -1,8 +1,9 @@
 PATH
   remote: .
   specs:
-    believer (0.1.2)
+    believer (0.2)
       activemodel (= 3.2.13)
+      connection_pool
       cql-rb (= 1.1.0.pre6)
 
 GEM
@@ -15,6 +16,7 @@ GEM
       i18n (= 0.6.1)
       multi_json (~> 1.0)
     builder (3.0.4)
+    connection_pool (1.1.0)
     cql-rb (1.1.0.pre6)
     diff-lcs (1.2.4)
     i18n (0.6.1)

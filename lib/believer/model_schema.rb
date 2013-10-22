@@ -1,4 +1,6 @@
 module Believer
+
+  # Mostly *borrowed* from ActiveRecord::ModelSchema ;)
   module ModelSchema
     extend ActiveSupport::Concern
 
@@ -34,8 +36,8 @@ module Believer
 
     module ClassMethods
       # Guesses the table name (in forced lower-case) based on the name of the class in the
-      # inheritance hierarchy descending directly from ActiveRecord::Base. So if the hierarchy
-      # looks like: Reply < Message < ActiveRecord::Base, then Message is used
+      # inheritance hierarchy descending directly from Believer::Base. So if the hierarchy
+      # looks like: Reply < Message < Believer::Base, then Message is used
       # to guess the table name even when called on Reply. The rules used to do the guess
       # are handled by the Inflector class in Active Support, which knows almost all common
       # English inflections. You can add new inflections in config/initializers/inflections.rb.
@@ -45,14 +47,14 @@ module Believer
       #
       # ==== Examples
       #
-      #   class Invoice < ActiveRecord::Base
+      #   class Invoice < Believer::Base
       #   end
       #
       #   file                  class               table_name
       #   invoice.rb            Invoice             invoices
       #
-      #   class Invoice < ActiveRecord::Base
-      #     class Lineitem < ActiveRecord::Base
+      #   class Invoice < Believer::Base
+      #     class Lineitem < Believer::Base
       #     end
       #   end
       #
@@ -60,7 +62,7 @@ module Believer
       #   invoice.rb            Invoice::Lineitem   invoice_lineitems
       #
       #   module Invoice
-      #     class Lineitem < ActiveRecord::Base
+      #     class Lineitem < Believer::Base
       #     end
       #   end
       #
@@ -74,7 +76,7 @@ module Believer
       #
       # You can also set your own table name explicitly:
       #
-      #   class Mouse < ActiveRecord::Base
+      #   class Mouse < Believer::Base
       #     self.table_name = "mice"
       #   end
       #
@@ -82,7 +84,7 @@ module Believer
       # own computation. (Possibly using <tt>super</tt> to manipulate the default
       # table name.) Example:
       #
-      #   class Post < ActiveRecord::Base
+      #   class Post < Believer::Base
       #     def self.table_name
       #       "special_" + super
       #     end
@@ -91,10 +93,6 @@ module Believer
       def table_name
         reset_table_name unless defined?(@table_name)
         @table_name
-      end
-
-      def original_table_name #:nodoc:
-        deprecated_original_property_getter :table_name
       end
 
       # Sets the table name explicitly. Example:
@@ -109,11 +107,6 @@ module Believer
         @original_table_name = @table_name if defined?(@table_name)
         @table_name          = value && value.to_s
         @quoted_table_name   = nil
-      end
-
-      def set_table_name(value = nil, &block) #:nodoc:
-        deprecated_property_setter :table_name, value, block
-        @quoted_table_name = nil
       end
 
       # Returns a quoted version of the table name, used to construct SQL statements.
@@ -144,33 +137,6 @@ module Believer
         "#{full_table_name_prefix}#{undecorated_table_name(name)}#{table_name_suffix}"
       end
 
-      def deprecated_property_setter(property, value, block)
-        if block
-          ActiveSupport::Deprecation.warn(
-              "Calling set_#{property} is deprecated. If you need to lazily evaluate " \
-            "the #{property}, define your own `self.#{property}` class method. You can use `super` " \
-            "to get the default #{property} where you would have called `original_#{property}`."
-          )
-
-          define_attr_method property, value, false, &block
-        else
-          ActiveSupport::Deprecation.warn(
-              "Calling set_#{property} is deprecated. Please use `self.#{property} = 'the_name'` instead."
-          )
-
-          define_attr_method property, value, false
-        end
-      end
-
-      def deprecated_original_property_getter(property)
-        ActiveSupport::Deprecation.warn("original_#{property} is deprecated. Define self.#{property} and call super instead.")
-
-        if !instance_variable_defined?("@original_#{property}") && respond_to?("reset_#{property}")
-          send("reset_#{property}")
-        else
-          instance_variable_get("@original_#{property}")
-        end
-      end
     end
   end
 end

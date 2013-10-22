@@ -8,7 +8,7 @@ def setup_database
     connection.use(env.connection_configuration[:keyspace])
   rescue Cql::QueryError
 
-    env.create_keyspace(connection)
+    env.create_keyspace({}, connection)
     connection.use(env.connection_configuration[:keyspace])
 
     Test.classes.each do |cl|

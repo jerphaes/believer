@@ -1,0 +1,7 @@
+development:
+  host: 'merb.local'
+  keyspace: 'merb_keyspace_dev'
+
+production:
+  host: 'merb.prod'
+  keyspace: 'merb_keyspace_prod'

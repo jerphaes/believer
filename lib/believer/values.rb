@@ -2,17 +2,6 @@ module Believer
 
   module Values
 
-    TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S%z'
-
-    def to_cql_literal(value)
-      return 'NULL' if value.nil?
-      return "'#{value}'" if value.is_a?(String)
-      return "#{value}" if value.is_a?(Numeric)
-      return "'#{value.strftime(TIMESTAMP_FORMAT)}'" if value.is_a?(Time) || value.is_a?(DateTime)
-      #return "#{value.to_i * 1000}" if value.is_a?(Time) || value.is_a?(DateTime)
-      return nil
-    end
-
     def convert_to_integer(v)
       return v.to_i unless v.nil?
       nil
@@ -24,6 +13,8 @@ module Believer
     end
 
     def convert_to_boolean(v)
+      return true if v.is_a?(TrueClass)
+      return false if v.is_a?(FalseClass)
       return v.to_bool if v.respond_to?(:to_bool)
       nil
     end

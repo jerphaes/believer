@@ -1,0 +1,7 @@
+development:
+  host: '123.456.789.0'
+  keyspace: 'development_keyspace'
+
+production:
+  host: '127.0.0.2'
+  keyspace: 'production_keyspace'

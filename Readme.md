@@ -34,6 +34,7 @@ An example:
         column :album
         column :name
         column :track_number, :type => :integer
+        column :data, :cql_type => :blob
 
         primary_key :artist, :album, :name
     end
@@ -44,13 +45,22 @@ This is the class you should extend from.
 #### The column class method
 Defines the mapping between a Ruby object attribute and a Cassandra column. Also defines a getter and setter attribute with the same name.
 The second argument is a Hash, which support the following keys:
-* type: the data type. Supported are: :string, :integer, :float, :timestamp
-
+* type: the data type. Supported values are: :string, :integer, :float, :timestamp, :time
+* cql_type: the CQL data type.
+For type determination, you must include either or both the :type or the :cql_type options.
 
 #### The primary_key class method
 Sets the primary key columns of the class.
 In a situation where you're only querying data, you don't need to set this.
 However, if you rely on object equality somewhere in your application, it is advisable to set the primary key, as the primary key values are used in the Believer::Base.eql? method.
+
+If you wish to use a partition key consisting of multiple columns, use an array as the first part of the primary_key list:
+
+    class Song
+        ...
+        primary_key [:artist, :album], :name, :...
+        ...
+    end
 
 ### Query your class
 The following methods can be used to query class instances.
@@ -127,6 +137,87 @@ This is the client connection configuration passed to the cql-rb gem.
 
 In other cases, you will have to programatically set the environment:
 
-    Believer::Base.environment = Believer::Environment::BaseEnv.new(:host => '127.0.0.1', :keyspace => 'mykeyspace')
+    Believer::Base.environment = Believer::Environment::BaseEnv.new(:host => '127.0.0.1',
+                                                                    :keyspace => 'mykeyspace')
+### Connection pooling
+If you wish to use a pool of connections, include a :pool node to the configuration.
+The pool library used is [connection_pool](https://github.com/mperham/connection_pool).
+
+    development:
+        host: 127.0.0.1
+        port: 9042
+        keyspace: my_keyspace
+        pool:
+            size: 10
+            timeout: 5
+
+## Callbacks
+The Believer::Base supports several callbacks to hook into the lifecycle of the models.
+These callbacks can be included in the body of a Believer::Base subclass, like so:
+    class Song < Believer::Base
+        after_save :do_something
+
+        before_destroy do
+            puts "About to be destroyed: #{self}"
+        end
+
+        def do_something
+            puts "Just been saved: #{self}"
+        end
+    end
+
+Supported callbacks are:
+* after_initialize
+* before_save
+* after_save
+* around_save
+* before_destroy
+* after_destroy
+* around_destroy
+
+## Relations
+If you include Believer::Relation in any class, you can define a relation between the including class and the Believer::Base instances.
+
+Supported relations are:
+* one-to-one: use the has_single method in the referencing class
+* one-to-many: use the has_single method in the referencing class
+
+Options for both relations are:
+* :class the name of the referenced class. If nil, it will be created from the relation name. Can be a constant or a String
+* :foreign_key the name of the attribute of the referenced class which acts as the key to this object. Can also be an array, in which case the cardinality and order must match with the :key option
+* :key the name of the attribute of the referencing class which acts as the key the referenced records. Can also be an array, in which case the cardinality and order must match with the :foreign_key option
+* :filter a Proc or lambda which is called with a Believer::Query instance as a parameter to tweak the relation query
+
+Example(s):
+
+  class Artist
+    include Believer::Relation
+
+    attr_accessor :name
+
+    has_some :albums, :class => 'Album', :key => :name, :foreign_key => :artist_name
+  end
+
+  class Album < Believer::Base
+    column :artist_name
+    column :name
+  end
+
+  class Song < Believer::Base
+    include Believer::Relation
+
+    column :artist_name
+    column :album_name
+
+    has_single :album, :class => 'Test::Album', :key => [:artist_name, :album_name], :foreign_key => [:artist_name, :name]
+  end
 
 
+## Test support
+An important aspect to note is that Cassandra does not support transactional rollbacks.
+The consequence of this is that records persisted in a test case are not automatically deleted after a test has executed,
+causing you to 'manually' delete all the garbage.
+
+To make this a little less labor intensive, you can include the module Believer::Test::TestRunLifeCycle in your test.
+This module will implement an after(:each) hook, which deletes all Believer::Base instance/records created in the span
+of the test.

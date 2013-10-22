@@ -53,9 +53,9 @@ module Believer
       end
 
       cql << " FROM #{@record_class.table_name}"
-      cql << " WHERE #{@wheres.map { |wc| "#{wc.to_cql}" }.join(' AND ')}" if @wheres && @wheres.any?
-      cql << " #{@order_by.to_cql}" unless @order_by.nil?
-      cql << " #{@limit_to.to_cql}" unless @limit_to.nil?
+      cql << " WHERE #{wheres.map { |wc| "#{wc.to_cql}" }.join(' AND ')}" if wheres.any?
+      cql << " #{order_by.to_cql}" unless order_by.nil?
+      cql << " #{limit_to.to_cql}" unless limit_to.nil?
       cql
     end
 

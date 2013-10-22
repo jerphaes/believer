@@ -1,7 +1,7 @@
 module Believer
 
   class Insert < Command
-    include Values
+    include CqlHelper
 
     attr_accessor :values
 

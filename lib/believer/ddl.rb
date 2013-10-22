@@ -5,15 +5,17 @@ module Believer
 
     module ClassMethods
       def create_table
-        cql = create_table_cql
-        puts "Creating table #{table_name} using CQL:\n#{cql}"
-        connection.execute(cql)
-        puts "Created table #{table_name}"
+        connection_pool.with do |connection|
+          cql = create_table_cql
+          puts "Creating table #{table_name} using CQL:\n#{cql}"
+          connection.execute(cql)
+          puts "Created table #{table_name}"
+        end
       end
 
       def create_table_cql
         s = "CREATE TABLE #{table_name} (\n"
-        col_statement_parts = columns.keys.map {|col| "#{col} #{columns[col].cql_column_type}"}
+        col_statement_parts = columns.keys.map {|col| "#{col} #{columns[col].cql_type}"}
         s << col_statement_parts.join(",\n")
 
         keys = []

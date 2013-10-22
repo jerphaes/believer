@@ -19,61 +19,6 @@ module Believer
 
     end
 
-    class Column
-      #TYPES = {
-      #    :ascii	strings	US-ASCII character string
-      #bigint	integers	64-bit signed long
-      #blob	blobs	Arbitrary bytes (no validation), expressed as hexadecimal
-      #boolean	booleans	true or false
-      #counter	integers	Distributed counter value (64-bit long)
-      #decimal	integers, floats	Variable-precision decimal
-      #double	integers	64-bit IEEE-754 floating point
-      #float	integers, floats	32-bit IEEE-754 floating point
-      #inet	strings	IP address string in IPv4 or IPv6 format*
-      #                                                     int	integers	32-bit signed integer
-      #list	n/a	A collection of one or more ordered elements
-      #map	n/a	A JSON-style array of literals: { literal : literal, literal : literal ... }
-      #set	n/a	A collection of one or more elements
-      #text	strings	UTF-8 encoded string
-      #timestamp	integers, strings	Date plus time, encoded as 8 bytes since epoch
-      #uuid	uuids	A UUID in standard UUID format
-      #timeuuid	uuids	Type 1 UUID only (CQL 3)
-      #varchar	strings	UTF-8 encoded string
-      #varint	integers	Arbitrary-precision integer
-      #}
-      #
-      CQL_COL_TYPES = {
-          :integer => 'INT',
-          :string => 'VARCHAR',
-          :timestamp => 'TIMESTAMP',
-          :float => 'FlOAT'
-      }
-
-      attr_reader :name, :type
-
-      def initialize(opts)
-        @name = opts[:name]
-        @type = opts[:type]
-        raise "Invalid column type #{@type}" unless CQL_COL_TYPES.has_key?(@type)
-        @key = opts[:key] == true || !opts[:key].nil?
-        if @key && opts[:key].is_a?(Hash)
-          @partition_key = opts[:key][:partition_key]
-        end
-      end
-
-      def cql_column_type
-        CQL_COL_TYPES[@type]
-      end
-
-      def is_key?
-        @key
-      end
-
-      def is_partition_key?
-        @partition_key
-      end
-
-    end
 
     module ClassMethods
 
@@ -83,7 +28,7 @@ module Believer
         @columns ||= {}
       end
 
-        # Defines a column on the model.
+      # Defines a column on the model.
       # The column name must correspond with the Cassandra column name
       def column(name, opts = {})
         defaults = {
@@ -91,7 +36,7 @@ module Believer
         }
         options = defaults.merge(opts).merge(:name => name)
 
-        columns[name] = Column.new(options)
+        columns[name] = ::Believer::Column.new(options)
 
         self.redefine_method(name) do
           read_attribute(name)
@@ -152,11 +97,7 @@ module Believer
     def write_attribute(attr_name, value)
       v = value
       # Convert the value to the actual type
-      unless v.nil? && self.class.columns[attr_name]
-        value_type = self.class.columns[attr_name].type
-        convert_method = "convert_to_#{value_type}".to_sym
-        v = self.send(convert_method, v) if respond_to?(convert_method)
-      end
+      v = self.class.columns[attr_name].convert_to_type(v) unless self.class.columns[attr_name].nil?
       @attributes[attr_name] = v
     end
 

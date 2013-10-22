@@ -1,23 +1,46 @@
 
 module Test
 
-  class Processor < Believer::Base
-    column :computer_id, :type => :integer
-    column :speed, :type => :integer
-    primary_key :computer_id
+  class Artist < Believer::Base
+    include Believer::Relation
+
+    column :name
+    column :label
+
+    primary_key :name
+
+    has_some :albums, :class => 'Test::Album', :key => :name, :foreign_key => :artist_name
   end
 
-  class Computer < Believer::Base
-    include Believer::Owner
+  class Album < Believer::Base
+    column :artist_name
+    column :name
+    column :release_date, :type => :timestamp
 
+    primary_key :artist_name, :name
+  end
+
+  class Song < Believer::Base
+    include Believer::Relation
+
+    column :artist_name
+    column :album_name
+    column :name
+    column :track_number, :type => :integer
+    column :data, :cql_type => :blob
+
+    primary_key :artist_name, :album_name, :name
+
+    has_single :album, :class => 'Test::Album', :key => [:artist_name, :album_name], :foreign_key => [:artist_name, :name]
+  end
+
+  class Person < Believer::Base
+    self.table_name= 'people'
 
     column :id, :type => :integer
-    column :brand, :type => :string
-    column :production_date, :type => :timestamp
+    column :name, :type => :string
 
     primary_key :id
-
-    has_some :processors, :class => Processor
 
   end
 
@@ -31,18 +54,8 @@ module Test
 
   end
 
-  class Person < Believer::Base
-    self.table_name= 'people'
-
-    column :id, :type => :integer
-    column :name, :type => :string
-
-    primary_key :id
-
-  end
-
   class Environment < Believer::Environment::BaseEnv
-    def connection_configuration
+    def configuration
       {:host => '127.0.0.1', :keyspace => 'believer_test_space'}
     end
   end
@@ -52,7 +65,7 @@ module Test
   end
 
   Believer::Base.environment = test_environment
-  CLASSES = [Processor, Computer, Event, Person]
+  CLASSES = [Artist, Album, Song, Event, Person]
   #CLASSES.each {|cl| cl.environment = test_environment}
 
   def self.classes

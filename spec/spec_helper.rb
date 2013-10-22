@@ -10,28 +10,14 @@ unless ENV['COVERAGE'] == 'no'
 end
 
 require 'believer'
-
-require 'believer/test/rspec/test_run_life_cycle'
-
-
-
+require 'believer/test/test_run_life_cycle'
 
 Dir[File.expand_path('../support/*.rb', __FILE__)].each {|f| require f}
 
-
 setup_database
 
-#class Event < Cql::Model
-#  primary_key :id
-#
-#  column :location
-#  column :date
-#end
-#
-#class Person < Cql::Model
-#  primary_key :id
-#
-#  column :first_name
-#  column :last_name
-#  column :birth_date, column_name: :dob
-#end
+RSpec.configure do |c|
+  c.add_setting :test_files_dir, :default => File.expand_path('../test_files/', __FILE__)
+end
+
+File.expand_path('../test_files/', __FILE__)

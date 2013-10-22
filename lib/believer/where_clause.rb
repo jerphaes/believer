@@ -1,7 +1,7 @@
 module Believer
 
   class WhereClause
-    include Values
+    include CqlHelper
 
     def initialize(*args)
       if args.any?

@@ -27,6 +27,8 @@ module Believer
       attrs.each do |name, val|
         send("#{name}=".to_sym, val)
       end if attrs.present?
+
+      yield self if block_given?
     end
 
     def self.instantiate_from_result_rows(row)
