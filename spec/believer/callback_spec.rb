@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Believer::Callbacks do
+  include Believer::Test::TestRunLifeCycle
 
   {:save => [:before, :after, :around],
    :destroy => [:before, :after, :around]

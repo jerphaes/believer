@@ -1,9 +1,11 @@
 module Believer
-  class Query < ScopedCommand
+  class Query < FilterCommand
 
     attr_accessor :record_class, :selects, :order_by, :limit_to
 
     delegate *(Enumerable.instance_methods(false).map {|enum_method| enum_method.to_sym}), :to => :to_a
+    delegate :each, :size, :[], :to => :to_a
+    delegate :primary_key_columns, :to => :record_class
 
     def initialize(attrs)
       super
@@ -85,23 +87,21 @@ module Believer
     end
 
     def to_a
-      unless @result_rows
+      if @loaded_objects.nil?
         result = execute
-        @result_rows = []
+        @loaded_objects = []
         start = Time.now
         result.each do |row|
-          @result_rows << @record_class.instantiate_from_result_rows(row)
+          @loaded_objects << @record_class.instantiate_from_result_rows(row)
         end
-        puts "Took #{sprintf "%.3f", (Time.now - start)*1000.0} ms to deserialize #{@result_rows.size} object(s)"
+        puts "Took #{sprintf "%.3f", (Time.now - start)*1000.0} ms to deserialize #{@loaded_objects.size} object(s)"
       end
-      @result_rows
-    end
-
-    def size
-      to_a.size
+      @loaded_objects
     end
 
     def count
+      return @loaded_objects.size unless @loaded_objects.nil?
+
       count_q = clone
       count_q.selects = ['COUNT(*)']
       result = count_q.execute
@@ -113,28 +113,31 @@ module Believer
       cnt
     end
 
-    def each
-      to_a.each do |r|
-        yield r
-      end
-    end
-
-    def [](index)
-      to_a[index]
+    # Tests if there are any records present which conform to the argument filter(s)
+    # @param args [Object] a filter condition. This argument has the same usage as the where method
+    def exists?(*args)
+      return count > 0 if args.nil? || args.size == 0
+      where(*args).exists?
     end
 
     def first
-      return @result_rows.first unless @result_rows.nil?
+      return @loaded_objects.first unless @loaded_objects.nil?
       clone.limit(1)[0]
     end
 
     def last
-      return @result_rows.last unless @result_rows.nil?
-      raise "Cannot retrieve last of no order column is set" if @order_by.nil?
+      return @loaded_objects.last unless @loaded_objects.nil?
+      raise "Cannot retrieve last if no order column is set" if @order_by.nil?
       lq = clone.limit(1)
       lq.order_by = @order_by.inverse
       lq[0]
     end
+
+    protected
+    def loaded_objects
+      @loaded_objects
+    end
+
   end
 
 end

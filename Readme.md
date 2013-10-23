@@ -245,3 +245,6 @@ causing you to 'manually' delete all the garbage.
 To make this a little less labor intensive, you can include the module Believer::Test::TestRunLifeCycle in your test.
 This module will implement an after(:each) hook, which deletes all Believer::Base instance/records created in the span
 of the test.
+
+## Class documentation
+For API go [here](http://rubydoc.info/gems/believer/frames).

@@ -13,3 +13,8 @@
 
 ## 0.2.1
 - Fixed the gemspec runtime dependency versions
+
+## 0.2.2
+- Added collection methods to relation collection
+- Small bugfixes
+- Fixed non working test module (Believer::Test::TestRunLifeCycle)

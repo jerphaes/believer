@@ -1,5 +1,5 @@
 module Believer
-  class BatchDelete < ScopedCommand
+  class BatchDelete < FilterCommand
 
     DELETE_BATCH_CHUNK_SIZE = 100
 

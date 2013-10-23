@@ -65,7 +65,7 @@ module Believer
 
         raise "key and foreign_key must have same number of items" if opts[:key].size != opts[:foreign_key].size
 
-        self.redefine_method(name) do
+        self.redefine_method(name) do |reload = false|
           relation_class = get_relation_class.call
 
           q = relation_class.scoped
@@ -75,13 +75,50 @@ module Believer
           end
           if options[:filter]
             q = self.instance_exec(q, &(options[:filter]))
-            return EmptyResult.new unless q
+            unless q
+              er = EmptyResult.new
+              er.extend(CollectionMethods)
+              er.extend(::Believer::FinderMethods)
+              return er
+            end
           end
           return q.first if options[:type] == :one_2_one
-          q
+
+          col = Collection.new(q.query_attributes)
+          col.to_a if reload
+          col
         end
 
       end
+
+    end
+
+    module CollectionMethods
+
+      def clear
+        destroy(*(to_a.dup))
+      end
+
+      def destroy(*objects)
+        return if loaded_objects.nil? || loaded_objects.empty?
+        objects.each do |obj|
+          if loaded_objects.include?(obj)
+            obj.destroy
+            loaded_objects.delete(obj)
+          end
+        end
+      end
+
+      def create(attrs = {})
+        obj = record_class.create(attrs)
+        loaded_objects << obj
+      end
+
+    end
+
+    class Collection < Believer::Query
+      include CollectionMethods
+      include FinderMethods
 
     end
 

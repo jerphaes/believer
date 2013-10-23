@@ -4,6 +4,16 @@ module Believer
     extend ActiveSupport::Concern
 
     module ClassMethods
+
+      def drop_table
+        connection_pool.with do |connection|
+          cql = "CREATE TABLE #{table_name}"
+          puts "Dropping table #{table_name} using CQL:\n#{cql}"
+          connection.execute(cql)
+          puts "Dropped table #{table_name}"
+        end
+      end
+
       def create_table
         connection_pool.with do |connection|
           cql = create_table_cql

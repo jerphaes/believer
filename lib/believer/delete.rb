@@ -1,6 +1,6 @@
 module Believer
   # Creates CQL DELETE statements
-  class Delete < ScopedCommand
+  class Delete < FilterCommand
 
     # Creates the CQL
     def to_cql

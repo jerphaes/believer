@@ -12,18 +12,14 @@ describe Believer::Environment do
   end
 
   it 'load the Merb configuration' do
-    Env = Struct.new(:root, :environment, :logger)
-
-    Merb = Env.new(File.join(RSpec.configuration.test_files_dir, 'merb'), :development, nil)
+    Merb = Struct.new(:root, :environment, :logger).new(File.join(RSpec.configuration.test_files_dir, 'merb'), :development, nil)
     env = Believer::Base.environment
     env.class.should == Believer::Environment::MerbEnv
     env.configuration[:host].should == 'merb.local'
   end
 
   it 'load the rails configuration' do
-    Env = Struct.new(:root, :env, :logger)
-
-    Rails = Env.new(File.join(RSpec.configuration.test_files_dir, 'rails'), :development, nil)
+    Rails = Struct.new(:root, :env, :logger).new(File.join(RSpec.configuration.test_files_dir, 'rails'), :development, nil)
     env = Believer::Base.environment
     env.class.should == Believer::Environment::RailsEnv
     env.configuration[:host].should == '123.456.789.0'

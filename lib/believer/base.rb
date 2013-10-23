@@ -10,6 +10,7 @@ module Believer
     include Scoping
     include Persistence
     extend Querying
+    extend FinderMethods
     include Callbacks
     include DDL
 

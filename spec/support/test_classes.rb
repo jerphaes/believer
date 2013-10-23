@@ -45,10 +45,15 @@ module Test
   end
 
   class Event < Believer::Base
-    column :computer_id, :type => :integer
+    column :computer_id, :type => :string
     column :event_type, :type => :integer
     column :time, :type => :integer, :key => true
     column :description, :type => :string
+
+    PARAMETER_NAMES = (1..50).map { |index| "parameter_#{index}".to_sym }
+    PARAMETER_NAMES.each do |param|
+      column param, :type => :float
+    end
 
     primary_key [:computer_id, :event_type], :time
 

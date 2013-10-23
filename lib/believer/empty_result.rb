@@ -11,7 +11,9 @@ module Believer
         :each => nil,
         :first => nil,
         :last => nil,
-        :any? => false
+        :any? => false,
+        :sort_by => nil,
+        :loaded_objects => []
     }
     QUERY_METHODS = [:select, :where, :order, :limit]
 

@@ -1,6 +1,6 @@
 module Believer
   # A command implementation which includes a CQL WHERE clause
-  class ScopedCommand < Command
+  class FilterCommand < Command
 
     def query_attributes
       attrs = super
