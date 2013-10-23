@@ -18,3 +18,6 @@
 - Added collection methods to relation collection
 - Small bugfixes
 - Fixed non working test module (Believer::Test::TestRunLifeCycle)
+
+## 0.2.3
+- Fixed typo in Gem description

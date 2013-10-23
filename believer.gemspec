@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.email         = ['jerphaes@gmail.com']
   s.homepage      = 'http://github.com/jerphaes/believer'
   s.summary       = %q{CQL3 ORM}
-  s.description   = %q{An Objeect Relational Mapping library for CQL3 }
+  s.description   = %q{An Object Relational Mapping library for CQL3 }
   s.license       = 'Apache License 2.0'
 
   s.files         = Dir['lib/**/*.rb', 'bin/*', 'README.md']
