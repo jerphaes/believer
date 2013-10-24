@@ -8,7 +8,6 @@ describe Believer::Test::TestRunLifeCycle do
     @destroyed_count = 0
     @destroy_monitor = lambda do |obj|
       @destroyed_count += 1
-      puts "Destroyed"
     end
 
     begin
@@ -20,7 +19,6 @@ describe Believer::Test::TestRunLifeCycle do
   end
 
   after :all do
-    puts "Checking"
     @destroyed_count.should == @created.size
     XXX.drop_table
   end
@@ -30,7 +28,6 @@ describe Believer::Test::TestRunLifeCycle do
     @created = []
     10.times do |i|
       @created << XXX.create(:name => "artist_#{i}", :destroy_monitor => @destroy_monitor)
-      puts "Created"
     end
   end
 

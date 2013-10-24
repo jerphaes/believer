@@ -39,6 +39,7 @@ require 'believer/batch_delete'
 require 'believer/callbacks'
 require 'believer/finder_methods'
 
+require 'believer/log_subscriber'
 require 'believer/observer'
 require 'believer/relation'
 
