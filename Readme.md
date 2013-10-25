@@ -72,6 +72,7 @@ The following methods can be used to query class instances.
 * select: specify which fields to load. Using none defaults to all fields being loaded.
 * limit: limit the number of results to a maximum
 * order: specify the order of the results
+* allow_filtering: allow or disallow filtering (see ALLOW FILTERING in Cassandra CQL docs)
 
 All methods are chainable, meaning you can
 
@@ -119,6 +120,12 @@ Album.order(:name, :asc)
 
 # Order descending by name
 Album.order(:name, :desc)
+```
+
+#### allow_filtering
+``` ruby
+Album.allow_filtering(true) # -> SELECT * FROM albums ALLOW FILTERING
+Album.allow_filtering(false) # -> SELECT * FROM albums
 ```
 
 #### Method chaining
@@ -194,6 +201,8 @@ development:
         logger:
             # Use STDOUT to log messages
             use_environment: false
+            # Log at info (1) level -> no CQL prints
+            level: 1
 
 development:
     host: 127.0.0.1
