@@ -12,27 +12,28 @@ describe Believer::Test::TestRunLifeCycle do
 
     begin
       XXX.drop_table
-      XXX.create_table
-    rescue
-    end
 
+    rescue
+    ensure
+          XXX.create_table
+    end
   end
 
   after :all do
+    puts "DROP TABLE XXXX"
     @destroyed_count.should == @created.size
     XXX.drop_table
   end
 
   before :each do
-
     @created = []
     10.times do |i|
       @created << XXX.create(:name => "artist_#{i}", :destroy_monitor => @destroy_monitor)
     end
   end
 
-  it "should clean all created objects" do
-
+  it "should clean all created objects, even after a fail" do
+    #fail
   end
 
   class XXX < Believer::Base

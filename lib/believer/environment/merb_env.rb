@@ -3,6 +3,10 @@ module Believer
   module Environment
     class MerbEnv < Believer::Environment::BaseEnv
 
+      def self.applies?
+        defined?(::Merb)
+      end
+
       def load_configuration
         config_file = File.join(Merb.root, 'config', 'believer.yml')
         config = HashWithIndifferentAccess.new(YAML::load(File.open(config_file.to_s)))

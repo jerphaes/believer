@@ -27,6 +27,12 @@ module Believer
       def connection(environment)
         unless @connection_pool
           pool_config = environment.connection_pool_configuration
+          if pool_config.nil?
+            pool_config = {
+                :size => 1,
+                :timeout => 10
+            }
+          end
           @connection_pool ||= ::ConnectionPool.new(pool_config) do
             environment.create_connection(:connect_to_keyspace => true)
           end

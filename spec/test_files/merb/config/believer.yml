@@ -1,5 +1,9 @@
+test:
+  host: 'merb.test.local'
+  keyspace: 'merb_keyspace_test'
+
 development:
-  host: 'merb.local'
+  host: 'merb.development.local'
   keyspace: 'merb_keyspace_dev'
 
 production:

@@ -1,6 +1,5 @@
 module Believer
   class Query < FilterCommand
-
     attr_accessor :record_class, :selects, :order_by, :limit_to
 
     delegate *(Enumerable.instance_methods(false).map {|enum_method| enum_method.to_sym}), :to => :to_a
@@ -89,12 +88,17 @@ module Believer
     def to_a
       if @loaded_objects.nil?
         result = execute
-        @loaded_objects = []
-        start = Time.now
-        result.each do |row|
-          @loaded_objects << @record_class.instantiate_from_result_rows(row)
+        notify_payload = {:class => @record_class}
+        @loaded_objects = ActiveSupport::Notifications.instrument('deserialize.believer', notify_payload) do
+          start = Time.now
+          objects = []
+          result.each do |row|
+            objects << record_class.instantiate_from_result_rows(row)
+          end
+          notify_payload[:count] = objects.count
+          objects
         end
-        puts "Took #{sprintf "%.3f", (Time.now - start)*1000.0} ms to deserialize #{@loaded_objects.size} object(s)"
+        #puts "Took #{sprintf "%.3f", (Time.now - start)*1000.0} ms to deserialize #{@loaded_objects.size} object(s)"
       end
       @loaded_objects
     end

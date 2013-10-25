@@ -42,6 +42,10 @@ module Believer
       equal_key_values?(obj)
     end
 
+    def self.logger
+      environment.logger
+    end
+
   end
 
 

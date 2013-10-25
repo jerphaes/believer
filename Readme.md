@@ -170,6 +170,39 @@ development:
         size: 10
         timeout: 5
 ```
+### Believer configuration
+The Believer exposes some configuration options. These can added in a 'believer' node of the configuration hash.
+For now only the logging is configurable.
+
+Some examples:
+
+``` yaml
+development:
+    host: 127.0.0.1
+    port: 9042
+    keyspace: my_keyspace
+    believer:
+        logger:
+            # Use the application log (f.e. /log/development.log)
+            use_environment: true
+
+development:
+    host: 127.0.0.1
+    port: 9042
+    keyspace: my_keyspace
+    believer:
+        logger:
+            # Use STDOUT to log messages
+            use_environment: false
+
+development:
+    host: 127.0.0.1
+    port: 9042
+    keyspace: my_keyspace
+    believer:
+        # No Believer logging at all
+        logger: false
+```
 
 ## Callbacks
 The Believer::Base supports several callbacks to hook into the lifecycle of the models.

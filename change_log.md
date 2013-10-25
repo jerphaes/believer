@@ -21,3 +21,7 @@
 
 ## 0.2.3
 - Fixed typo in Gem description
+
+## 0.2.4
+- Logging using ActiveSupport LogSubscriber
+- Extra configuration options

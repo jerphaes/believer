@@ -76,7 +76,7 @@ module Believer
           if options[:filter]
             q = self.instance_exec(q, &(options[:filter]))
             unless q
-              er = EmptyResult.new
+              er = EmptyResult.new(:record_class => relation_class)
               er.extend(CollectionMethods)
               er.extend(::Believer::FinderMethods)
               return er

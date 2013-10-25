@@ -61,7 +61,13 @@ module Test
 
   class Environment < Believer::Environment::BaseEnv
     def configuration
-      {:host => '127.0.0.1', :keyspace => 'believer_test_space'}
+      {
+          :host => '127.0.0.1',
+          :keyspace => 'believer_test_space',
+          :believer => {
+              :logger => {:level => ::Logger::DEBUG}
+          }
+      }
     end
   end
 

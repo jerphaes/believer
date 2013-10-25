@@ -7,26 +7,23 @@ module Believer
 
       def drop_table
         connection_pool.with do |connection|
-          cql = "CREATE TABLE #{table_name}"
-          puts "Dropping table #{table_name} using CQL:\n#{cql}"
-          connection.execute(cql)
-          puts "Dropped table #{table_name}"
+          cql = "DROP TABLE #{table_name}"
+          ActiveSupport::Notifications.instrument('deserialize.believer', :class => self, :cql => cql, :method => :drop) do
+            connection.execute(cql)
+          end
         end
       end
 
       def create_table
         connection_pool.with do |connection|
           cql = create_table_cql
-          puts "Creating table #{table_name} using CQL:\n#{cql}"
-          connection.execute(cql)
-          puts "Created table #{table_name}"
+          ActiveSupport::Notifications.instrument('ddl.believer', :class => self, :cql => cql, :method => :create) do
+            connection.execute(cql)
+          end
         end
       end
 
       def create_table_cql
-        s = "CREATE TABLE #{table_name} (\n"
-        col_statement_parts = columns.keys.map {|col| "#{col} #{columns[col].cql_type}"}
-        s << col_statement_parts.join(",\n")
 
         keys = []
         get_primary_key.each do |key_part|
@@ -36,6 +33,10 @@ module Believer
             keys << key_part
           end
         end
+
+        s = "CREATE TABLE #{table_name} (\n"
+        col_statement_parts = columns.keys.map {|col| "#{col} #{columns[col].cql_type}"}
+        s << col_statement_parts.join(",\n")
         s << ",\n"
         s << "PRIMARY KEY (#{keys.join(',')})"
         s << "\n)"

@@ -18,7 +18,6 @@ module Believer
 
         def cleanup
           unless @saved_models.nil? || @saved_models.empty?
-            puts "Cleaning up #{@saved_models.size} objects"
             @saved_models.each do |model|
               begin
                 model.destroy
