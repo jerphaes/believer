@@ -65,7 +65,7 @@ module Test
           :host => '127.0.0.1',
           :keyspace => 'believer_test_space',
           :believer => {
-              :logger => {:level => ::Logger::INFO}
+              :logger => {:level => ::Logger::DEBUG}
           }
       }
     end

@@ -20,6 +20,25 @@ module Believer
       attrs.merge(:order_by => @order_by, :selects => @selects, :limit_to => @limit_to, :filtering_allowed => filtering_allowed)
     end
 
+    def pluck(*fields)
+      fields.each do |f|
+        raise "Unknown field #{f} for class #{record_class}" unless record_class.columns.has_key?(f)
+      end
+      q = clone
+      q.selects = fields
+      rows = q.execute
+      pluck_res = []
+      rows.each do |r|
+        if fields.size > 1
+          pluck_res << fields.map {|f| record_class.columns[f].convert_to_type(r[f.to_s]) }
+        else
+          f = fields[0]
+          pluck_res << record_class.columns[f].convert_to_type(r[f.to_s])
+        end
+      end
+      pluck_res
+    end
+
     def select(*fields)
       q = clone
       q.selects ||= []
@@ -102,7 +121,6 @@ module Believer
         result = execute
         notify_payload = {:class => @record_class}
         @loaded_objects = ActiveSupport::Notifications.instrument('deserialize.believer', notify_payload) do
-          start = Time.now
           objects = []
           result.each do |row|
             objects << record_class.instantiate_from_result_rows(row)
@@ -110,7 +128,6 @@ module Believer
           notify_payload[:count] = objects.count
           objects
         end
-        #puts "Took #{sprintf "%.3f", (Time.now - start)*1000.0} ms to deserialize #{@loaded_objects.size} object(s)"
       end
       @loaded_objects
     end

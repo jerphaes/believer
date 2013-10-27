@@ -33,6 +33,10 @@ module Believer
     end
 
     def ==(obj)
+      eql?(obj)
+    end
+
+    def eql?(obj)
       return false if obj.nil?
       return false unless obj.is_a?(self.class)
       equal_key_values?(obj)
