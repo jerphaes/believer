@@ -17,21 +17,26 @@ module Believer
         observe Believer::Base
 
         def cleanup
-          unless @saved_models.nil? || @saved_models.empty?
-            @saved_models.each do |model|
+          unless @observed_models.nil? || @observed_models.empty?
+            @observed_models.each do |model|
               begin
                 model.destroy
               rescue Exception => e
                 puts "Could not destroy model #{model}: #{e}\n#{e.backtrace.join("\n")}"
               end
             end
-            @saved_models = nil
+            @observed_models = nil
           end
         end
 
+        def observed_models
+          return @observed_models.dup unless @observed_models.nil?
+          []
+        end
+
         def after_save(model)
-          @saved_models ||= []
-          @saved_models << model
+          @observed_models ||= []
+          @observed_models << model
         end
 
       end

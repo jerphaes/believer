@@ -24,7 +24,6 @@ module Believer
         return nil unless believer_configuration[:logger]
         return environment_logger if believer_configuration[:logger][:use_environment] && respond_to?(:environment_logger)
         unless @std_logger
-          puts believer_configuration[:logger]
           @std_logger = ::Logger.new(STDOUT)
           if believer_configuration[:logger][:level] && believer_configuration[:logger][:level].is_a?(Numeric)
             @std_logger.level = believer_configuration[:logger][:level].to_i
@@ -101,8 +100,6 @@ module Believer
           CREATE KEYSPACE #{connection_configuration[:keyspace]}
           WITH #{ks_props_s}
         KS_DEF
-
-        puts ks_def
 
         conn.execute(ks_def)
       end

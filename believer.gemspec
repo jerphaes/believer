@@ -31,5 +31,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'simplecov', '0.7.1'
+  s.add_development_dependency 'will_paginate'
 
 end

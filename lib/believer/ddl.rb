@@ -8,7 +8,7 @@ module Believer
       def drop_table
         connection_pool.with do |connection|
           cql = "DROP TABLE #{table_name}"
-          ActiveSupport::Notifications.instrument('deserialize.believer', :class => self, :cql => cql, :method => :drop) do
+          ActiveSupport::Notifications.instrument('ddl.believer', :class => self, :cql => cql, :method => :drop) do
             connection.execute(cql)
           end
         end

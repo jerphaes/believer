@@ -1,7 +1,7 @@
 module Believer
   class Command
 
-    attr_accessor :record_class
+    attr_accessor :record_class, :consistency_level
 
     def initialize(attrs = {})
       attrs.each do |name, value|
@@ -14,8 +14,14 @@ module Believer
       self.class.new(query_attributes)
     end
 
+    def consistency(level)
+      c = clone
+      c.consistency_level = level
+      c
+    end
+
     def query_attributes
-      {:record_class => @record_class}
+      {:record_class => @record_class, :consistency_level => @consistency_level}
     end
 
     def command_name
@@ -23,16 +29,14 @@ module Believer
     end
 
     def execute(name = nil)
-      name = "#{record_class.name} #{command_name}" if name.nil?
       @record_class.connection_pool.with do |connection|
         cql = to_cql
         begin
-          #start = Time.now
-          #res = connection.execute(cql)
-          #puts "#{name} #{sprintf "%.3f", (Time.now - start)*1000.0} ms: #{cql}"
-          #return res
+          name = "#{record_class.name} #{command_name}" if name.nil?
           return ActiveSupport::Notifications.instrument('cql.believer', :cql => cql, :name => name) do
-            return connection.execute(cql)
+            exec_opts = {}
+            exec_opts[:consistency] = consistency_level unless consistency_level.nil?
+            return connection.execute(cql, exec_opts)
           end
         rescue Cql::Protocol::DecodingError => e
           # Decoding errors tend to #$%# up the connection, resulting in no more activity, so a reconnect is performed here.

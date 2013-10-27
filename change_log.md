@@ -25,3 +25,7 @@
 ## 0.2.4
 - Logging using ActiveSupport LogSubscriber
 - Extra configuration options
+
+## 0.2.5
+- Added allow_filtering method to Believer::Query
+- Added consistency level support using method

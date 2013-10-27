@@ -8,7 +8,6 @@ module Believer
     end
 
     def wheres
-      #puts "Wheres: #{@wheres}"
       @wheres ||= []
     end
 

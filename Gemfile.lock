@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    believer (0.2.4)
+    believer (0.2.5)
       activemodel (~> 3)
       connection_pool
       cql-rb (>= 1.1.0.pre6)
@@ -34,6 +34,7 @@ GEM
       multi_json (~> 1.0)
       simplecov-html (~> 0.7.1)
     simplecov-html (0.7.1)
+    will_paginate (3.0.5)
 
 PLATFORMS
   ruby
@@ -43,3 +44,4 @@ DEPENDENCIES
   rake
   rspec
   simplecov (= 0.7.1)
+  will_paginate

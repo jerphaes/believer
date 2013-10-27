@@ -21,10 +21,6 @@ module Believer
 
     def initialize(attrs = {})
       @attributes = {}
-      #puts "Attrs: #{attrs.to_json}"
-      #self.class.columns.each do |name, colum_definition|
-      #  send("#{name}=".to_sym, attrs[name.to_s])
-      #end if attrs.present?
       attrs.each do |name, val|
         send("#{name}=".to_sym, val)
       end if attrs.present?
@@ -50,3 +46,5 @@ module Believer
 
 
 end
+
+ActiveSupport.run_load_hooks(:believer, Believer::Base)

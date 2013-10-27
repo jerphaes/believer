@@ -4,47 +4,57 @@ require 'spec_helper'
 describe Believer::Test::TestRunLifeCycle do
   include Believer::Test::TestRunLifeCycle
 
+  CREATE_COUNT = 10
+
   before :all do
-    @destroyed_count = 0
-    @destroy_monitor = lambda do |obj|
-      @destroyed_count += 1
-    end
-
+    @monitor = Monitor.new
     begin
-      XXX.drop_table
-
+      Fly.drop_table
     rescue
     ensure
-          XXX.create_table
+      Fly.create_table
+      @created = []
+      CREATE_COUNT.times do |i|
+        @created << Fly.create(:name => "artist_#{i}", :kill_monitor => @monitor)
+      end
     end
   end
 
   after :all do
-    puts "DROP TABLE XXXX"
-    @destroyed_count.should == @created.size
-    XXX.drop_table
+    Fly.drop_table
+    @monitor.kill_count.should == @created.size
+  end
+
+  after :each do
   end
 
   before :each do
-    @created = []
-    10.times do |i|
-      @created << XXX.create(:name => "artist_#{i}", :destroy_monitor => @destroy_monitor)
-    end
   end
 
   it "should clean all created objects, even after a fail" do
-    #fail
+    Believer::Test::TestRunLifeCycle::Destructor.instance.observed_models.size.should == CREATE_COUNT
   end
 
-  class XXX < Believer::Base
+  class Monitor
+    attr_reader :kill_count
+
+    def initialize
+      @kill_count = 0
+    end
+
+    def destroyed
+      @kill_count += 1
+    end
+  end
+
+  class Fly < Believer::Base
     column :name, :type => :string
     primary_key :name
-    cattr_accessor :destroyed_count
 
-    attr_accessor :destroy_monitor
+    attr_accessor :kill_monitor
 
     before_destroy do
-      @destroy_monitor.call(self)
+      self.kill_monitor.destroyed
     end
   end
 

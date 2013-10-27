@@ -1,6 +1,11 @@
+require 'believer/extending'
+
 module Believer
   class Query < FilterCommand
-    attr_accessor :record_class, :selects, :order_by, :limit_to
+    include Extending
+
+    attr_accessor :record_class, :selects, :order_by, :limit_to, :filtering_allowed
+    alias :filtering_allowed? :filtering_allowed
 
     delegate *(Enumerable.instance_methods(false).map {|enum_method| enum_method.to_sym}), :to => :to_a
     delegate :each, :size, :[], :to => :to_a
@@ -12,7 +17,7 @@ module Believer
 
     def query_attributes
       attrs = super
-      attrs.merge(:order_by => @order_by, :selects => @selects, :limit_to => @limit_to)
+      attrs.merge(:order_by => @order_by, :selects => @selects, :limit_to => @limit_to, :filtering_allowed => filtering_allowed)
     end
 
     def select(*fields)
@@ -20,7 +25,6 @@ module Believer
       q.selects ||= []
       q.selects += fields
       q.selects.flatten!
-      #puts "New selects: #{q.selects}, added: #{fields}"
       q
     end
 
@@ -44,11 +48,18 @@ module Believer
       end
     end
 
+    def allow_filtering(b = true)
+      q = clone
+      q.filtering_allowed = b
+      q
+    end
+
     def to_cql
       cql = "SELECT "
       if @selects && @selects.any?
         cql << "#{@selects.join(', ')}"
       else
+        #@record_class.environment.believer_configuration[:expand_columns]
         cql << @record_class.columns.keys.join(',')
         #cql << "*"
       end
@@ -57,6 +68,7 @@ module Believer
       cql << " WHERE #{wheres.map { |wc| "#{wc.to_cql}" }.join(' AND ')}" if wheres.any?
       cql << " #{order_by.to_cql}" unless order_by.nil?
       cql << " #{limit_to.to_cql}" unless limit_to.nil?
+      cql << " ALLOW FILTERING" if filtering_allowed?
       cql
     end
 
