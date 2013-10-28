@@ -34,7 +34,6 @@ GEM
       multi_json (~> 1.0)
       simplecov-html (~> 0.7.1)
     simplecov-html (0.7.1)
-    will_paginate (3.0.5)
 
 PLATFORMS
   ruby
@@ -44,4 +43,3 @@ DEPENDENCIES
   rake
   rspec
   simplecov (= 0.7.1)
-  will_paginate
