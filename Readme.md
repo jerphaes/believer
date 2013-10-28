@@ -49,7 +49,11 @@ Defines the mapping between a Ruby object attribute and a Cassandra column. Also
 The second argument is a Hash, which support the following keys:
 * type: the data type. Supported values are: :string, :integer, :float, :timestamp, :time
 * cql_type: the CQL data type.
-For type determination, you must include either or both the :type or the :cql_type options.
+* element_type: sets the type of elements in a collection if the type is a :set (CQL type SET) or an :array (CQL type LIST)
+* key_type; set the type of the hash keys is the type is a :hash (CQL type MAP)
+* value_type; set the type of the hash values is the type is a :hash (CQL type MAP)
+
+Note: for correct type determination, you must include either or both the :type or the :cql_type options.
 
 #### The primary_key class method
 Sets the primary key columns of the class.

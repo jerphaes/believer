@@ -44,6 +44,8 @@ require 'believer/log_subscriber'
 require 'believer/observer'
 require 'believer/relation'
 
+require 'believer/create_table'
+require 'believer/drop_table'
 require 'believer/ddl'
 require 'believer/base'
 

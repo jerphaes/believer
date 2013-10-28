@@ -30,3 +30,6 @@
 - Added allow_filtering method to Believer::Query
 - Added consistency level support using method
 - Support for pluck method
+
+## 0.2.6
+- Basic support for collection attributes: list, set and map. Only reads and full updates are supported, not partial (e.g. UPDATE users SET favs['author'] = 'Ed Poe' WHERE id = 'jsmith')

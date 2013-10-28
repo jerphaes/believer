@@ -1,3 +1,5 @@
+require 'set'
+
 module Believer
 
   # Represents a Cassandra table column
@@ -17,7 +19,7 @@ module Believer
         :int => {:ruby_type => :integer}, # integers 32-bit signed integer
         :list => {:ruby_type => :array}, # n/a A collection of one or more ordered elements
         :map => {:ruby_type => :hash}, # n/a A JSON-style array of literals: { literal : literal, literal : literal ... }
-        :set => {:ruby_type => :array}, # n/a A collection of one or more elements
+        :set => {:ruby_type => :set}, # n/a A collection of one or more elements
         :text => {:ruby_type => :string}, # strings UTF-8 encoded string
         :timestamp => {:ruby_type => :time}, # integers, strings Date plus time, encoded as 8 bytes since epoch
         :uuid => {:ruby_type => :string}, # uuids A UUID in standard UUID format
@@ -28,14 +30,23 @@ module Believer
 
     # Supported Ruby 'types'
     RUBY_TYPES = {
+        :symbol => {:default_cql_type => :varchar},
         :integer => {:default_cql_type => :int},
         :string => {:default_cql_type => :varchar},
         :time => {:default_cql_type => :timestamp},
         :timestamp => {:default_cql_type => :timestamp},
-        :float => {:default_cql_type => :float}
+        :float => {:default_cql_type => :float},
+        :array => {:default_cql_type => :list},
+        :set => {:default_cql_type => :set},
+        :hash => {:default_cql_type => :map},
     }
 
-    attr_reader :name, :type, :cql_type
+    attr_reader :name,
+                :ruby_type,
+                :cql_type,
+                :element_type,
+                :key_type,
+                :value_type
 
     # Creates a new instance.
     # @param opts [Hash] values options
@@ -48,16 +59,53 @@ module Believer
       raise "Invalid type #{opts[:type]}" unless RUBY_TYPES.has_key?(opts[:type])
 
       @name = opts[:name]
-      @type = opts[:type].nil? ? CQL_TYPES[opts[:cql_type]][:ruby_type] : opts[:type]
+      @ruby_type = opts[:type].nil? ? CQL_TYPES[opts[:cql_type]][:ruby_type] : opts[:type]
       @cql_type = opts[:cql_type].nil? ? RUBY_TYPES[opts[:type]][:default_cql_type] : opts[:cql_type]
+
+      @element_type = opts[:element_type]
+      @key_type = opts[:key_type]
+      @value_type = opts[:value_type]
+
     end
 
     # Converts the value to a one that conforms to the type of this column
     # @param v [Object] the value
     def convert_to_type(v)
-      convert_method = "convert_to_#{@type}".to_sym
-      return self.send(convert_method, v) if respond_to?(convert_method)
-      v
+      # TODO: kind of a dirty hack, this...
+      case @ruby_type
+        when :array
+          return convert_to_array(v, element_type)
+        when :set
+          return convert_to_set(v, element_type)
+        when :hash
+          return convert_to_hash(v, key_type, value_type)
+      end
+      convert_value_to_type(v, @ruby_type)
+    end
+
+    def to_cql
+      col_stmt = "#{name} #{cql_type}"
+      if cql_type == :list
+        col_stmt << "<#{to_cql_type(element_type)}>"
+      elsif cql_type == :set
+        col_stmt << "<#{to_cql_type(element_type)}>"
+      elsif cql_type == :map
+        col_stmt << "<#{to_cql_type(key_type)},#{to_cql_type(value_type)}>"
+      end
+      col_stmt
+    end
+
+    private
+    def to_cql_type(t)
+      return t if CQL_TYPES.has_key?(t)
+      return RUBY_TYPES[t][:default_cql_type] if RUBY_TYPES.has_key?(t)
+      nil
+    end
+
+    def to_ruby_type(t)
+      return t if RUBY_TYPES.has_key?(t)
+      return CQL_TYPES[t][:ruby_type] if CQL_TYPES.has_key?(t)
+      nil
     end
 
   end

@@ -16,8 +16,28 @@ describe 'Time series' do
     end
   end
 
-  it 'load all' do
+  it 'should load all' do
     Test::Event.where(:computer_id => 'ABC', :event_type => 1).size.should == @count
   end
+
+  it 'should load after specific time' do
+    events = Test::Event.where(:computer_id => 'ABC', :event_type => 1).where('time >= ?', @start + @interval)
+    expect(events.size).to eql(@count - 1)
+  end
+
+  it 'should load between to date' do
+    events = Test::Event.where(:computer_id => 'ABC', :event_type => 1).
+        where('time >= ?', @start + @interval).
+        where('time <= ?', @start + (@count-2) * @interval)
+    expect(events.size).to eql(@count - 2)
+  end
+
+  #it 'should load between to date' do
+  #  events = Test::Event.where(:computer_id => 'ABC', :event_type => 1).select(:computer_id, :event_type).
+  #      where('time >= ?', @start + @interval).
+  #      where('time >= ?', @start + @interval*2).
+  #      where('time <= ?', @start + (@count-2) * @interval)
+  #  expect(events.size).to eql(@count - 2)
+  #end
 
 end

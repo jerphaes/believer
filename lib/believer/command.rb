@@ -36,7 +36,12 @@ module Believer
           return ActiveSupport::Notifications.instrument('cql.believer', :cql => cql, :name => name) do
             exec_opts = {}
             exec_opts[:consistency] = consistency_level unless consistency_level.nil?
-            return connection.execute(cql, exec_opts)
+            begin
+              return connection.execute(cql, exec_opts)
+            rescue Cql::NotConnectedError => not_connected
+              connection.connect
+              return connection.execute(cql, exec_opts)
+            end
           end
         rescue Cql::Protocol::DecodingError => e
           # Decoding errors tend to #$%# up the connection, resulting in no more activity, so a reconnect is performed here.

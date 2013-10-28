@@ -98,6 +98,7 @@ module Believer
       v = value
       # Convert the value to the actual type
       v = self.class.columns[attr_name].convert_to_type(v) unless self.class.columns[attr_name].nil?
+      #puts "#{attr_name} :: #{value} --> #{v} ==== #{v.class.name}"
       @attributes[attr_name] = v
     end
 

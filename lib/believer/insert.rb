@@ -11,7 +11,9 @@ module Believer
 
     def to_cql
       attrs = @values.keys
-      "INSERT INTO #{@record_class.table_name} (#{attrs.join(', ')}) VALUES (#{attrs.map {|a| to_cql_literal(@values[a]) }.join(', ')})"
+      cols_def = "#{attrs.join(', ')}"
+      vals_defs = attrs.map { |a| to_cql_literal(@values[a]) }.join(', ')
+      "INSERT INTO #{@record_class.table_name} (#{cols_def}) VALUES (#{vals_defs})"
     end
   end
 

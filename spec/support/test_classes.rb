@@ -47,7 +47,7 @@ module Test
   class Event < Believer::Base
     column :computer_id, :type => :string
     column :event_type, :type => :integer
-    column :time, :type => :integer, :key => true
+    column :time, :type => :timestamp, :key => true
     column :description, :type => :string
 
     PARAMETER_NAMES = (1..50).map { |index| "parameter_#{index}".to_sym }
@@ -59,13 +59,22 @@ module Test
 
   end
 
+  class Child < Believer::Base
+    column :name, :type => :string
+    column :marbles, :type => :set, :element_type => :symbol
+    column :soccer_cards, :type => :array, :element_type => :string
+    column :family, :type => :hash, :key_type => :symbol, :value_type => :string
+
+    primary_key :name
+  end
+
   class Environment < Believer::Environment::BaseEnv
     def configuration
       {
           :host => '127.0.0.1',
           :keyspace => 'believer_test_space',
           :believer => {
-              :logger => {:level => ::Logger::INFO}
+              :logger => {:level => ::Logger::DEBUG}
           }
       }
     end
@@ -76,7 +85,7 @@ module Test
   end
 
   Believer::Base.environment = test_environment
-  CLASSES = [Artist, Album, Song, Event, Person]
+  CLASSES = [Artist, Album, Song, Event, Person, Child]
   #CLASSES.each {|cl| cl.environment = test_environment}
 
   def self.classes
