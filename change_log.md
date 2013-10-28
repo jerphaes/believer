@@ -29,3 +29,4 @@
 ## 0.2.5
 - Added allow_filtering method to Believer::Query
 - Added consistency level support using method
+- Support for pluck method

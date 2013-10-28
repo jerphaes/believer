@@ -122,6 +122,17 @@ Album.order(:name, :asc)
 Album.order(:name, :desc)
 ```
 
+#### pluck
+In order to retrieve just the the value(s) of one or more columns, the pluck method can be used.
+This method does not instantiate any Believer::Base instances
+
+``` ruby
+# Select single column value
+Album.where(:artist_name => 'Michael Jackson').pluck(:name) # -> ['Off the wall', 'Thriller', 'Bad']
+# Select multiple column values
+Album.where(:artist_name => 'Michael Jackson').pluck(:name, :release_date) # -> [['Off the wall', '1979-01-01', 'Thriller', 'Bad']
+```
+
 #### allow_filtering
 ``` ruby
 Album.allow_filtering(true) # -> SELECT * FROM albums ALLOW FILTERING
