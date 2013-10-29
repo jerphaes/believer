@@ -22,7 +22,7 @@ describe Believer::Test::TestRunLifeCycle do
 
   after :all do
     Fly.drop_table
-    @monitor.kill_count.should == @created.size
+    expect(@monitor.kill_count).to eql @created.size
   end
 
   after :each do
@@ -32,7 +32,7 @@ describe Believer::Test::TestRunLifeCycle do
   end
 
   it "should clean all created objects, even after a fail" do
-    Believer::Test::TestRunLifeCycle::Destructor.instance.observed_models.size.should == CREATE_COUNT
+    expect(Believer::Test::TestRunLifeCycle::Destructor.instance.observed_models.size).to eql CREATE_COUNT
   end
 
   class Monitor

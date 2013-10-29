@@ -9,7 +9,7 @@ describe Believer::Querying do
       {:method => :limit, :args => 10},
   ].each do |scenario|
     it "#{scenario[:method]} call should return a query object" do
-      Test::Artist.send(scenario[:method], scenario[:args]).class.should == Believer::Query
+      expect(Test::Artist.send(scenario[:method], scenario[:args]).class).to eql Believer::Query
     end
   end
 

@@ -17,7 +17,7 @@ describe Believer::Callbacks do
         })
         object.send(method)
 
-        called.should == true
+        expect(called).to eql(true)
       end
     end
   end

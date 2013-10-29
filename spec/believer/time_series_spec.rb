@@ -6,7 +6,7 @@ describe 'Time series' do
   before :each do
     @interval = 1.minute
     @start = Time.utc(2012)
-    @count = 10
+    @count = 5
     @count.times do |i|
       attrs = {:computer_id => 'ABC', :event_type => 1, :time => @start + (@interval * i)}
       Test::Event::PARAMETER_NAMES.each do |param|
@@ -17,7 +17,7 @@ describe 'Time series' do
   end
 
   it 'should load all' do
-    Test::Event.where(:computer_id => 'ABC', :event_type => 1).size.should == @count
+    expect(Test::Event.where(:computer_id => 'ABC', :event_type => 1).size).to eql @count
   end
 
   it 'should load after specific time' do

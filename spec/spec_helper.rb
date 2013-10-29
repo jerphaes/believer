@@ -16,8 +16,12 @@ Dir[File.expand_path('../support/*.rb', __FILE__)].each {|f| require f}
 
 setup_database
 
-RSpec.configure do |c|
-  c.add_setting :test_files_dir, :default => File.expand_path('../test_files/', __FILE__)
+RSpec.configure do |config|
+  config.add_setting :test_files_dir, :default => File.expand_path('../test_files/', __FILE__)
+  config.expect_with :rspec do |c|
+    # Enable only the `expect` sytax...
+    c.syntax = :expect
+  end
 end
 
 File.expand_path('../test_files/', __FILE__)

@@ -32,7 +32,7 @@ describe Believer::Query do
         where(:release_date => Time.utc(2013)).
         order(:name, :desc).
         limit(10)
-    q.to_cql.should == "SELECT name, artist FROM albums WHERE name = 'Revolver' AND release_date = '2013-01-01 00:00:00+0000' ORDER BY name DESC LIMIT 10"
+    expect(q.to_cql).to eql "SELECT name, artist FROM albums WHERE name = 'Revolver' AND release_date = '2013-01-01 00:00:00+0000' ORDER BY name DESC LIMIT 10"
   end
 
   it 'should include allow filtering clause' do
@@ -48,7 +48,7 @@ describe Believer::Query do
   it 'should behave like an Enumerable' do
     q = Believer::Query.new(:record_class => Test::Artist).where(:name => artists.map { |o| o.name })
     Enumerable.instance_methods(false).each do |enum_method|
-      q.respond_to?(enum_method.to_sym).should == true
+      expect(q.respond_to?(enum_method.to_sym)).to eql true
     end
   end
 

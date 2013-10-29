@@ -17,8 +17,8 @@ describe Believer::Environment do
     end
     Rails = Struct.new(:root, :env, :logger).new(File.join(RSpec.configuration.test_files_dir, 'rails'), :test, nil)
     env = Believer::Base.environment
-    env.class.should == Believer::Environment::RailsEnv
-    env.configuration[:host].should == '123.456.789.0'
+    expect(env.class).to eql Believer::Environment::RailsEnv
+    expect(env.configuration[:host]).to eql '123.456.789.0'
     Object.instance_eval { remove_const :Rails}
   end
 
@@ -28,8 +28,8 @@ describe Believer::Environment do
     end
     Merb = Struct.new(:root, :environment, :logger).new(File.join(RSpec.configuration.test_files_dir, 'merb'), :test, nil)
     env = Believer::Base.environment
-    env.class.should == Believer::Environment::MerbEnv
-    env.configuration[:host].should == 'merb.test.local'
+    expect(env.class).to eql Believer::Environment::MerbEnv
+    expect(env.configuration[:host]).to eql 'merb.test.local'
     Object.instance_eval { remove_const :Merb}
   end
 

@@ -21,28 +21,28 @@ describe Believer::Relation do
 
   it "report correct size of one to many relation" do
     a = Test::Artist.where(:name => 'Beatles').first
-    a.albums.size.should == 3
+    expect(a.albums.size).to eql 3
   end
 
   it "one to many relation collection should support exists? method" do
     a = Test::Artist.where(:name => 'Beatles').first
-    a.albums.exists?(:name => 'Help').should == true
+    expect(a.albums.exists?(:name => 'Help')).to eql true
   end
 
   it "one to many relation collection should support clear method" do
     a = Test::Artist.where(:name => 'Beatles').first
-    a.albums.size.should == 3
+    expect(a.albums.size).to eql 3
     a.albums.clear
-    a.albums.size.should == 0
+    expect(a.albums.size).to eql 0
   end
 
   it "one to many relation collection should support find method" do
     a = Test::Artist.where(:name => 'Beatles').first
-    a.albums.find(:name => 'Help').should == @help
+    expect(a.albums.find(:name => 'Help')).to eql @help
   end
 
   it "one to one relation" do
-    @have_a_cigar.album.should == Test::Album.where(:artist_name => 'Pink Floyd', :name => 'Wish you were here').first
+    expect(@have_a_cigar.album).to eql Test::Album.where(:artist_name => 'Pink Floyd', :name => 'Wish you were here').first
   end
 
 end
