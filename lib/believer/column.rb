@@ -11,7 +11,7 @@ module Believer
         :bigint => {:ruby_type => :integer}, # integers 64-bit signed long
         :blob => {:ruby_type => :string}, # blobs Arbitrary bytes (no validation), expressed as hexadecimal
         :boolean => {:ruby_type => :boolean}, # booleans true or false
-        :counter => {:ruby_type => :integer}, # integers Distributed counter value (64-bit long)
+        :counter => {:ruby_type => :counter}, # integers Distributed counter value (64-bit long)
         :decimal => {:ruby_type => :float}, # integers, floats Variable-precision decimal
         :double => {:ruby_type => :float}, # integers 64-bit IEEE-754 floating point
         :float => {:ruby_type => :float}, # integers, floats 32-bit IEEE-754 floating point
@@ -25,7 +25,7 @@ module Believer
         :uuid => {:ruby_type => :string}, # uuids A UUID in standard UUID format
         :timeuuid => {:ruby_type => :integer}, # uuids Type 1 UUID only (CQL 3)
         :varchar => {:ruby_type => :string}, # strings UTF-8 encoded string
-        :varint => {:ruby_type => :integer}, # integers Arbitrary-precision integer
+        :varint => {:ruby_type => :integer} # integers Arbitrary-precision integer
     }
 
     # Supported Ruby 'types'
@@ -39,6 +39,7 @@ module Believer
         :array => {:default_cql_type => :list},
         :set => {:default_cql_type => :set},
         :hash => {:default_cql_type => :map},
+        :counter => {:default_cql_type => :counter, :default_value => lambda { Counter.new } }
     }
 
     attr_reader :name,
@@ -65,6 +66,9 @@ module Believer
       @element_type = opts[:element_type]
       @key_type = opts[:key_type]
       @value_type = opts[:value_type]
+
+      @default_value = opts[:default_value]
+
 
     end
 
@@ -93,6 +97,19 @@ module Believer
         col_stmt << "<#{to_cql_type(key_type)},#{to_cql_type(value_type)}>"
       end
       col_stmt
+    end
+
+    def has_default_value?
+      (@default_value != nil) || RUBY_TYPES[ruby_type][:default_value] != nil
+    end
+
+    def default_value
+      def_val = @default_value || RUBY_TYPES[ruby_type][:default_value]
+      unless def_val.nil?
+        return def_val.call if def_val.is_a?(Proc)
+        return def_val
+      end
+      nil
     end
 
     private

@@ -24,7 +24,7 @@ module Believer
 
     # Saves the model.
     def save
-      if persisted?
+      if persisted? || is_counter_instance?
         Update.create(self).execute
       else
         Insert.new(:record_class => self.class, :values => self).execute

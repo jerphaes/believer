@@ -77,6 +77,11 @@ module Believer
         connection
       end
 
+      def drop_keyspace
+        conn = create_connection(:connect_to_keyspace => false)
+        conn.execute("DROP KEYSPACE #{connection_configuration[:keyspace]}")
+      end
+
       def create_keyspace(properties = {}, connection = nil)
         conn = connection || create_connection(:connect_to_keyspace => false)
 

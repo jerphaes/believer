@@ -34,3 +34,4 @@
 ## 0.2.6
 - Basic support for collection attributes: list, set and map. Only reads and full updates are supported, not partial (e.g. UPDATE users SET favs['author'] = 'Ed Poe' WHERE id = 'jsmith')
 - Addded Update class for saving already persisted objects
+- Counter support

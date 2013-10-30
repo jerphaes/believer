@@ -34,6 +34,15 @@ module Test
     has_single :album, :class => 'Test::Album', :key => [:artist_name, :album_name], :foreign_key => [:artist_name, :name]
   end
 
+  class AlbumSales < Believer::Base
+    column :artist_name
+    column :name
+
+    column :sales, :type => :counter
+
+    primary_key :artist_name, :name
+  end
+
   class Person < Believer::Base
     self.table_name= 'people'
 
@@ -41,7 +50,6 @@ module Test
     column :name, :type => :string
 
     primary_key :id
-
   end
 
   class Event < Believer::Base
@@ -85,7 +93,7 @@ module Test
   end
 
   Believer::Base.environment = test_environment
-  CLASSES = [Artist, Album, Song, Event, Person, Child]
+  CLASSES = [Artist, Album, Song, AlbumSales, Event, Person, Child]
   #CLASSES.each {|cl| cl.environment = test_environment}
 
   def self.classes

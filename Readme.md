@@ -47,13 +47,36 @@ This is the class you should extend from.
 #### The column class method
 Defines the mapping between a Ruby object attribute and a Cassandra column. Also defines a getter and setter attribute with the same name.
 The second argument is a Hash, which support the following keys:
-* type: the data type. Supported values are: :string, :integer, :float, :timestamp, :time
+* type: the data type. Supported values are: :string, :integer, :float, :timestamp, :time, :array, :set, :map
 * cql_type: the CQL data type.
 * element_type: sets the type of elements in a collection if the type is a :set (CQL type SET) or an :array (CQL type LIST)
 * key_type; set the type of the hash keys is the type is a :hash (CQL type MAP)
 * value_type; set the type of the hash values is the type is a :hash (CQL type MAP)
 
 Note: for correct type determination, you must include either or both the :type or the :cql_type options.
+
+#### Counters
+You can use CQL counters by setting the column type to :counter. The internal value is a Believer::Counter instance,
+and can be manipulated in the following ways:
+
+``` ruby
+class AlbumSales < Believer::Base
+    column :artist_name
+    column :name
+
+    column :sales, :type => :counter
+
+    primary_key :artist_name, :name
+end
+
+album_sales = AlbumSales.new
+album_sales.sales # Returns a Believer::Counter, with a value of 0
+album_sales.sales.incr # Increment counter by 1, value is 1
+album_sales.sales.incr(6) # Increment counter by 3, value is 7
+album_sales.sales.decr # Decrement counter by 1, value is 6
+album_sales.sales.decr(3) # Decrement counter by 3, value is 3
+album_sales.sales.reset! # Reset it to the initial value, which is 0
+```
 
 #### The primary_key class method
 Sets the primary key columns of the class.

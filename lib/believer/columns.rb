@@ -47,6 +47,10 @@ module Believer
         end
       end
 
+      def columns_with_type(t)
+        columns.values.find_all {|col| col.ruby_type == t}
+      end
+
       def primary_key(*cols)
         @primary_key = *cols
       end
@@ -91,14 +95,26 @@ module Believer
     end
 
     def read_attribute(attr_name)
+      col = self.class.columns[attr_name]
+      if !@attributes.has_key?(attr_name) && col && col.has_default_value?
+        write_attribute(attr_name, col.default_value)
+      end
       @attributes[attr_name]
     end
 
     def write_attribute(attr_name, value)
       v = value
       # Convert the value to the actual type
-      v = self.class.columns[attr_name].convert_to_type(v) unless self.class.columns[attr_name].nil?
-      #puts "#{attr_name} :: #{value} --> #{v} ==== #{v.class.name}"
+      col = self.class.columns[attr_name]
+      unless col.nil?
+        cur_val = @attributes[attr_name]
+        if cur_val && cur_val.respond_to?(:adopt_value)
+          cur_val.adopt_value(value)
+          v = cur_val
+        else
+          v = col.convert_to_type(v)
+        end
+      end
       @attributes[attr_name] = v
     end
 

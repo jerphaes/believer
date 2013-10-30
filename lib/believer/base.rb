@@ -12,6 +12,7 @@ module Believer
     extend Querying
     extend FinderMethods
     include Callbacks
+    include Counting
     include DDL
 
     include ::ActiveModel::Observing

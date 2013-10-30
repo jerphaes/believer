@@ -28,7 +28,13 @@ module Believer
       self.class.name.split('::').last.underscore
     end
 
+    def can_execute?
+      true
+    end
+
     def execute(name = nil)
+      return false unless can_execute?
+
       @record_class.connection_pool.with do |connection|
         cql = to_cql
         begin

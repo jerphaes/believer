@@ -17,6 +17,10 @@ module Believer
       return "'#{value.strftime(CQL_TIMESTAMP_FORMAT)}'" if value.is_a?(Time) || value.is_a?(DateTime)
       #return "#{value.to_i * 1000}" if value.is_a?(Time) || value.is_a?(DateTime)
 
+      if value.is_a?(Counter)
+
+      end
+
       # Set
       if value.is_a?(Set)
         return "{#{value.map {|v| to_cql_literal(v)}.join(',')}}"

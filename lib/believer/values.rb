@@ -52,6 +52,12 @@ module Believer
       return v.to_sym
     end
 
+    def convert_to_counter(v)
+      return nil if v.nil?
+      return v if v.is_a?(Counter)
+      Counter.new(v.to_i)
+    end
+
     def convert_to_array(v, element_type = nil)
       return nil if v.nil?
       arr = v.is_a?(Array) ? v : Array.new(v)
