@@ -50,7 +50,7 @@ module Test
     column :time, :type => :timestamp, :key => true
     column :description, :type => :string
 
-    PARAMETER_NAMES = (1..50).map { |index| "parameter_#{index}".to_sym }
+    PARAMETER_NAMES = (1..5).map { |index| "parameter_#{index}".to_sym }
     PARAMETER_NAMES.each do |param|
       column param, :type => :float
     end
@@ -74,7 +74,7 @@ module Test
           :host => '127.0.0.1',
           :keyspace => 'believer_test_space',
           :believer => {
-              :logger => {:level => ::Logger::INFO}
+              :logger => {:level => ::Logger::DEBUG}
           }
       }
     end

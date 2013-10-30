@@ -21,15 +21,26 @@ module Believer
 
     def initialize(attrs = {})
       @attributes = {}
-      attrs.each do |name, val|
-        send("#{name}=".to_sym, val)
-      end if attrs.present?
-
+      set_attributes(attrs)
       yield self if block_given?
     end
 
     def self.instantiate_from_result_rows(row)
       new(row)
+    end
+
+    def reload!
+      persisted_object = self.class.scoped.where(key_values).first
+      unless persisted_object.nil?
+        set_attributes(persisted_object.attributes)
+      end
+      self
+    end
+
+    def set_attributes(attrs)
+      attrs.each do |name, val|
+        send("#{name}=".to_sym, val)
+      end if attrs.present?
     end
 
     def ==(obj)

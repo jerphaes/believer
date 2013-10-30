@@ -24,12 +24,28 @@ module Believer
 
     # Saves the model.
     def save
-      Insert.new(:record_class => self.class, :values => self).execute
+      if persisted?
+        Update.create(self).execute
+      else
+        Insert.new(:record_class => self.class, :values => self).execute
+      end
+      persisted!
+      self
     end
 
     # Destroys the model.
     def destroy
-      Delete.new(:record_class => self.class).where(key_values).execute
+      res = Delete.new(:record_class => self.class).where(key_values).execute
+      @persisted = false
+      res
+    end
+
+    def persisted!
+      @persisted = true
+    end
+
+    def persisted?
+      @persisted == true
     end
 
   end
