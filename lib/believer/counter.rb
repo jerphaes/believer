@@ -13,7 +13,10 @@ module Believer
     end
 
     def adopt_value(v)
-      @value = 0 if v.nil?
+      if v.nil?
+        @value = 0
+        return self
+      end
       @value = v.to_i
       self
     end
