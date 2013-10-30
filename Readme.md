@@ -76,6 +76,8 @@ album_sales.sales.incr(6) # Increment counter by 3, value is 7
 album_sales.sales.decr # Decrement counter by 1, value is 6
 album_sales.sales.decr(3) # Decrement counter by 3, value is 3
 album_sales.sales.reset! # Reset it to the initial value, which is 0
+album_sales.sales = 4 # Explicitly set the value...
+album_sales.sales.to_i # ...which is now 4
 ```
 
 #### The primary_key class method
