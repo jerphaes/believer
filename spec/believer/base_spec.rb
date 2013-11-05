@@ -14,4 +14,9 @@ describe Believer::Base do
     expect(artist.reload!.label).to eql('Epic')
   end
 
+  it 'should be able to pass a block in the initializer' do
+    Test::Artist.new(:name => 'Level 42', :label => 'Epic') do |model|
+      expect(model.name).to eql 'Level 42'
+    end
+  end
 end

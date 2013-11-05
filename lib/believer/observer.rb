@@ -1,5 +1,4 @@
 if Believer.features[:active_model_observing]
-  require 'active_model/observing'
 
   module Believer
 

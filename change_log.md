@@ -43,5 +43,5 @@
 - Small fix regariding the setting of the consitency level
 - Added pluck and all to Believer::Base class methods
 
-# 0.2.9
+# 0.2.9 - 0.2.10
 - ActiveModel 4 support

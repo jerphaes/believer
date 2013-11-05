@@ -13,8 +13,16 @@ require 'active_model'
 begin
   require 'active_model/observing'
   Believer.features[:active_model_observing] = true
+  puts "Active model observing active"
 rescue LoadError => le
-  Believer.features[:active_model_observing] = false
+  begin
+    require 'rails/observers/active_model'
+    Believer.features[:active_model_observing] = true
+    puts "Active model observing active"
+  rescue LoadError => le
+    Believer.features[:active_model_observing] = false
+    puts "No Active model observing!"
+  end
 end
 
 require 'active_support/concern'
