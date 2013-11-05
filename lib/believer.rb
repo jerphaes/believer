@@ -1,8 +1,21 @@
 module Believer
-  VERSION = '0.1'
+
+  FEATURES = {}
+
+  def self.features
+    FEATURES
+  end
+
 end
 
 require 'active_model'
+
+begin
+  require 'active_model/observing'
+  Believer.features[:active_model_observing] = true
+rescue LoadError => le
+  Believer.features[:active_model_observing] = false
+end
 
 require 'active_support/concern'
 require 'active_support/core_ext'
@@ -43,7 +56,11 @@ require 'believer/callbacks'
 require 'believer/finder_methods'
 
 require 'believer/log_subscriber'
-require 'believer/observer'
+
+if Believer.features[:active_model_observing]
+  require 'believer/observer'
+end
+
 require 'believer/relation'
 
 require 'believer/create_table'

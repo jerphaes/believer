@@ -25,14 +25,9 @@ describe Believer::Test::TestRunLifeCycle do
     expect(@monitor.kill_count).to eql @created.size
   end
 
-  after :each do
-  end
-
-  before :each do
-  end
-
   it "should clean all created objects, even after a fail" do
-    expect(Believer::Test::TestRunLifeCycle::Destructor.instance.observed_models.size).to eql CREATE_COUNT
+    puts "Observed models: \n#{Believer::Test::TestRunLifeCycle::Destructor.instance.observed_models.join("\n")}"
+    expect(Believer::Test::TestRunLifeCycle::Destructor.instance.observed_models.size).to eql Fly.create_count
   end
 
   class Monitor
@@ -52,6 +47,14 @@ describe Believer::Test::TestRunLifeCycle do
     primary_key :name
 
     attr_accessor :kill_monitor
+    cattr_accessor :create_count
+
+    def initialize(attrs)
+      super
+      self.class.create_count ||= 0
+      self.class.create_count += 1
+      puts "Created #{self.class.create_count}"
+    end
 
     before_destroy do
       self.kill_monitor.destroyed

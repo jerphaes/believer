@@ -15,7 +15,10 @@ module Believer
     include Counting
     include DDL
 
-    include ::ActiveModel::Observing
+    if Believer.features[:active_model_observing]
+      include ::ActiveModel::Observing
+    end
+
 
     # The Cassandra row ID
     attr_accessor :id
