@@ -38,3 +38,7 @@
 
 ## 0.2.7
 - Small bugfix in Counter class
+
+# 0.2.8
+- Small fix regariding the setting of the consitency level
+- Added pluck and all to Believer::Base class methods

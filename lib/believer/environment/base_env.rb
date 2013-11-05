@@ -72,7 +72,8 @@ module Believer
           connection = Cql::Client.connect(cc)
           connection.use(cc[:keyspace])
         else
-          connection = Cql::Client.connect(cc.delete_if { |k, v| k == :keyspace })
+          cc_no_keyspace = cc.delete_if { |k, v| k.to_s == 'keyspace' }
+          connection = Cql::Client.connect(cc_no_keyspace)
         end
         connection
       end

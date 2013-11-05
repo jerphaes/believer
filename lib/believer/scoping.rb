@@ -9,6 +9,9 @@ module Believer
         Query.new(:record_class => self)
       end
 
+      def all
+        scoped
+      end
     end
 
   end

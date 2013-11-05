@@ -40,8 +40,11 @@ module Believer
         begin
           name = "#{record_class.name} #{command_name}" if name.nil?
           return ActiveSupport::Notifications.instrument('cql.believer', :cql => cql, :name => name) do
-            exec_opts = {}
-            exec_opts[:consistency] = consistency_level unless consistency_level.nil?
+
+            unless consistency_level.nil? || consistency_level.empty?
+              exec_opts ||= {}
+              exec_opts[:consistency] = consistency_level
+            end
             begin
               return connection.execute(cql, exec_opts)
             rescue Cql::NotConnectedError => not_connected

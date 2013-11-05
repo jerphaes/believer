@@ -47,9 +47,10 @@ module Believer
       diff > 0
     end
 
-    def to_i
+    def value
       @value
     end
+    alias :to_i :value
 
     def initial_value
       if @initial_value.nil?
