@@ -37,9 +37,13 @@ module Believer
         :timestamp => {:default_cql_type => :timestamp},
         :float => {:default_cql_type => :float},
         :array => {:default_cql_type => :list},
-        :set => {:default_cql_type => :set},
+        :set => {:default_cql_type => :set, :apply_cql_result_row_conversion => true},
         :hash => {:default_cql_type => :map},
-        :counter => {:default_cql_type => :counter, :default_value => lambda { Counter.new } }
+        :counter => {
+            :default_cql_type => :counter,
+            :default_value => lambda { Counter.new },
+            :apply_cql_result_row_conversion => true
+        }
     }
 
     attr_reader :name,
@@ -69,7 +73,7 @@ module Believer
 
       @default_value = opts[:default_value]
 
-
+      @apply_cql_result_row_conversion = opts[:apply_cql_result_row_conversion] || RUBY_TYPES[@ruby_type][:apply_cql_result_row_conversion]
     end
 
     # Converts the value to a one that conforms to the type of this column
@@ -110,6 +114,10 @@ module Believer
         return def_val
       end
       nil
+    end
+
+    def apply_cql_result_row_conversion?
+      @apply_cql_result_row_conversion == true
     end
 
     private

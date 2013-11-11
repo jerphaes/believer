@@ -77,6 +77,16 @@ module Believer
         @primary_key.size > 1
       end
 
+      def apply_cql_result_row_conversion?
+        if @apply_cql_result_row_conversion.nil?
+          @apply_cql_result_row_conversion = columns.any? {|name, col| col.apply_cql_result_row_conversion?}
+        end
+        @apply_cql_result_row_conversion
+      end
+
+      def apply_cql_result_row_conversion=(b)
+        @apply_cql_result_row_conversion = b
+      end
 
     end
 
@@ -140,6 +150,14 @@ module Believer
         setter_method = "#{name}=".to_sym
         self.send(setter_method, value) if respond_to?(setter_method)
       end if attrs.present?
+    end
+
+    #protected
+    def merge_attributes(attrs)
+      @attributes ||= {}
+      attrs.each_pair do |k, v|
+        @attributes[k.to_sym] = v
+      end
     end
 
   end

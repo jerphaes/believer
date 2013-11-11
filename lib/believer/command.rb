@@ -1,7 +1,7 @@
 module Believer
   class Command
 
-    attr_accessor :record_class, :consistency_level
+    attr_accessor :record_class, :consistency_level, :execution_options
 
     def initialize(attrs = {})
       attrs.each do |name, value|
@@ -41,10 +41,11 @@ module Believer
           name = "#{record_class.name} #{command_name}" if name.nil?
           return ActiveSupport::Notifications.instrument('cql.believer', :cql => cql, :name => name) do
 
-            unless consistency_level.nil? || consistency_level.empty?
-              exec_opts ||= {}
-              exec_opts[:consistency] = consistency_level
-            end
+            #unless consistency_level.nil? || consistency_level.empty?
+            #  exec_opts ||= {}
+            #  exec_opts[:consistency] = consistency_level
+            #end
+            exec_opts = (execution_options.nil? || execution_options.empty?) ? nil : execution_options
             begin
               return connection.execute(cql, exec_opts)
             rescue Cql::NotConnectedError => not_connected

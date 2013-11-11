@@ -4,6 +4,8 @@ module Believer
   class Query < FilterCommand
     include Extending
 
+    DEFAULT_FILTER_LIMIT = 10000
+
     attr_accessor :record_class, :selects, :order_by, :limit_to, :filtering_allowed
     alias :filtering_allowed? :filtering_allowed
 
@@ -99,7 +101,13 @@ module Believer
       objects.size
     end
 
-    def delete_all(options = {})
+    def delete_all
+      del = Delete.new(:record_class => self.record_class)
+      del.wheres = self.wheres.dup
+      del.execute
+    end
+
+    def delete_all_chunked(options = {})
       cnt = count
       chunk_size = options[:delete_batch_chunk_size] || (self.limit_to.nil? ? nil : self.limit_to.size) || cnt
       key_cols = self.record_class.primary_key_columns

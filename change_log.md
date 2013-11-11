@@ -45,3 +45,6 @@
 
 # 0.2.9 - 0.2.10
 - ActiveModel 4 support
+
+# 0.2.11
+- Slightly faster result rows to objects conversion for large result sets

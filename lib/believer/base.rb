@@ -1,4 +1,3 @@
-
 module Believer
   class Base
     extend ::ActiveModel::Naming
@@ -30,6 +29,12 @@ module Believer
     end
 
     def self.instantiate_from_result_rows(row)
+      unless apply_cql_result_row_conversion?
+        obj = new
+        obj.merge_attributes(row)
+        #obj.set_attributes_direct(HashWithIndifferentAccess.new(row))
+        return obj
+      end
       new(row)
     end
 
