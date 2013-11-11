@@ -32,10 +32,17 @@ module Believer
       pluck_res = []
       rows.each do |r|
         if fields.size > 1
-          pluck_res << fields.map {|f| record_class.columns[f].convert_to_type(r[f.to_s]) }
+          pluck_res << fields.map {|f|
+            val = r[f.to_s]
+            col = record_class.columns[f]
+            val = col.apply_cql_result_row_conversion? ? col.convert_to_type(val) : val
+            val
+          }
         else
           f = fields[0]
-          pluck_res << record_class.columns[f].convert_to_type(r[f.to_s])
+          val = r[f.to_s]
+          col = record_class.columns[f]
+          pluck_res << col.apply_cql_result_row_conversion? ? col.convert_to_type(val) : val
         end
       end
       pluck_res
