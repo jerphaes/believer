@@ -35,14 +35,14 @@ module Believer
           pluck_res << fields.map {|f|
             val = r[f.to_s]
             col = record_class.columns[f]
-            val = col.apply_cql_result_row_conversion? ? col.convert_to_type(val) : val
+            val = (col.apply_cql_result_row_conversion? ? col.convert_to_type(val) : val)
             val
           }
         else
           f = fields[0]
           val = r[f.to_s]
           col = record_class.columns[f]
-          pluck_res << col.apply_cql_result_row_conversion? ? col.convert_to_type(val) : val
+          pluck_res << (col.apply_cql_result_row_conversion? ? col.convert_to_type(val) : val)
         end
       end
       pluck_res

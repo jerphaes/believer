@@ -48,3 +48,6 @@
 
 # 0.2.11 - 0.2.12
 - Slightly faster result rows to objects conversion for large result sets
+
+# 0.2.13
+- pluck method bugfix
