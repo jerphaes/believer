@@ -124,6 +124,7 @@ module Believer
         else
           v = col.convert_to_type(v)
         end
+        v = col.default_value if v.nil? && col.has_default_value?
       end
       @attributes[attr_name] = v
     end
@@ -150,6 +151,11 @@ module Believer
         setter_method = "#{name}=".to_sym
         self.send(setter_method, value) if respond_to?(setter_method)
       end if attrs.present?
+    end
+
+    # Returns a hash of all the attributes with their names as keys and the values of the attributes as values.
+    def attributes_dup
+      @attributes.dup
     end
 
     #protected
