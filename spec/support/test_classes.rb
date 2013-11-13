@@ -34,11 +34,12 @@ module Test
     has_single :album, :class => 'Test::Album', :key => [:artist_name, :album_name], :foreign_key => [:artist_name, :name]
   end
 
-  class AlbumSales < Believer::Base
+  class AlbumStatistics < Believer::Base
     column :artist_name
     column :name
 
-    column :sales, :type => :counter
+    column :sold, :type => :counter
+    column :produced, :type => :counter
 
     primary_key :artist_name, :name
   end
@@ -93,7 +94,7 @@ module Test
   end
 
   Believer::Base.environment = test_environment
-  CLASSES = [Artist, Album, Song, AlbumSales, Event, Person, Child]
+  CLASSES = [Artist, Album, Song, AlbumStatistics, Event, Person, Child]
   #CLASSES.each {|cl| cl.environment = test_environment}
 
   def self.classes

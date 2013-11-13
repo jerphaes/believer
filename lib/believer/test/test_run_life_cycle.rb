@@ -5,7 +5,7 @@ module Believer
       extend ActiveSupport::Concern
 
       included do
-        #Believer::Base.observers = Destructor
+
         Believer::Base.after_save do |model|
           Destructor.instance.after_save(model)
         end
@@ -16,21 +16,44 @@ module Believer
       end
 
       # Detroys all CqlRecord::Base instances created
-      class Destructor# < Believer::Observer
+      class Destructor
         include Singleton
-#        observe Believer::Base
+
+        def counters_action
+          if @counters_action.nil?
+            begin
+              @counters_action = Believer::Base.environment.believer_configuration[:test][:life_cycle][:counters].to_sym
+            rescue
+              @counters_action = :destroy
+            end
+          end
+          @counters_action
+        end
+
+        def should_destroy?(model)
+          #return false if model.is_counter_instance? && retain_counter_models?
+          true
+        end
 
         def cleanup
-          unless @observed_models.nil? || @observed_models.empty?
-            @observed_models.each do |model|
-              begin
-                model.destroy
-              rescue Exception => e
-                puts "Could not destroy model #{model}: #{e}\n#{e.backtrace.join("\n")}"
+          @observed_models.each do |model|
+            begin
+              if model.is_counter_instance?
+                case counters_action
+                  when :destroy
+                    model.destroy if should_destroy?(model)
+                  when :reset
+                    model.reset_counters!
+                  when :retain
+                end
+              else
+                model.destroy if should_destroy?(model)
               end
+            rescue Exception => e
+              puts "Could not destroy model #{model}: #{e}\n#{e.backtrace.join("\n")}"
             end
-            @observed_models = nil
-          end
+          end unless @observed_models.nil? || @observed_models.empty?
+          @observed_models = nil
         end
 
         def observed_models

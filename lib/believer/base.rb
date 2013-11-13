@@ -23,7 +23,6 @@ module Believer
     attr_accessor :id
 
     def initialize(attrs = {})
-      @attributes = {}
       set_attributes(attrs)
       yield self if block_given?
     end
@@ -47,6 +46,7 @@ module Believer
     end
 
     def set_attributes(attrs)
+      @attributes = {}
       attrs.each do |name, val|
         send("#{name}=".to_sym, val)
       end if attrs.present?

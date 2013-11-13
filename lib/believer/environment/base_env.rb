@@ -10,6 +10,11 @@ module Believer
               :logger => {
                   :use_environment => true,
                   :level => ::Logger::DEBUG
+              },
+              :test => {
+                  :life_cycle => {
+                      :counters => :destroy
+                  }
               }
           }
       }

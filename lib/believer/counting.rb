@@ -25,5 +25,14 @@ module Believer
       end
     end
 
+    def reset_counters!
+      reload!
+      self.class.counter_columns.each do |cc|
+        counter = self.send(cc.name)
+        counter.reset! unless counter.nil?
+      end
+      save
+    end
+
   end
 end
