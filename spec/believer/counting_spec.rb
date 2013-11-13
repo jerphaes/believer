@@ -31,9 +31,7 @@ describe Believer::Counting do
   it 'should be able to reset a counter' do
     album_attrs = {:artist_name => 'CSNY', :name => 'Deja vu'}
     album_sales = Test::AlbumStatistics.new(album_attrs)
-    album_sales.sold.incr(4)
-    expect(album_sales.has_counter_diffs?).to eql true
-    album_sales.save
+    album_sales.incr_counter!(:sold, 4)
 
     album_sales = Test::AlbumStatistics.where(album_attrs).first
     expect(album_sales.sold.value).to eql 4
@@ -64,13 +62,11 @@ describe Believer::Counting do
 
   it 'should be able to persist a counter value' do
     album_sales = Test::AlbumStatistics.new(:artist_name => 'CSNY', :name => 'Deja vu')
-    album_sales.sold.incr
-    album_sales.save
+    album_sales.incr_counter!(:sold)
     expect(album_sales.sold.value).to eql 1
 
     album_sales = Test::AlbumStatistics.where(:artist_name => 'CSNY', :name => 'Deja vu').first
-    album_sales.sold.incr
-    album_sales.save
+    album_sales.incr_counter!(:sold)
 
     album_sales = Test::AlbumStatistics.where(:artist_name => 'CSNY', :name => 'Deja vu').first
     expect(album_sales.sold.value).to eql 2

@@ -1,10 +1,16 @@
 module Believer
 
+  # The counter value
   class Counter
 
     def initialize(v = 0, initial_val = nil)
       @value = v
       @initial_value = initial_val.nil? ? @value : initial_val
+    end
+
+    def reconcile!
+      @initial_value = @value
+      self
     end
 
     def reset!

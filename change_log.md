@@ -56,3 +56,6 @@
 - Added a more efficient any? method to the Query interface
 - Renamed Counter reset! method to undo_changes!
 - Counter reset! method sets the counter to 0
+
+# 0.2.14
+- Counter bugfixes

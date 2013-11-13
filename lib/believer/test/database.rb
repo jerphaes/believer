@@ -14,7 +14,7 @@ module Believer
         keyspace = ::Believer::KeySpace.new(env)
         # First delete the existing keyspace
         begin
-          puts "Dropping keyspace"
+          #env.logger.debug "Dropping keyspace"
           keyspace.drop
         rescue Cql::QueryError
         end
@@ -30,7 +30,7 @@ module Believer
             clazz = cl
           end
           if clazz.ancestors.include?(Believer::Base)
-            puts "Creating table #{clazz.table_name}"
+            #puts "Creating table #{clazz.table_name}"
             clazz.create_table()
           end
 
