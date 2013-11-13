@@ -8,6 +8,11 @@ module Believer
     end
 
     def reset!
+      @value = 0
+      self
+    end
+
+    def undo_changes!
       @value = initial_value
       self
     end

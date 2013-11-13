@@ -69,15 +69,20 @@ class AlbumSales < Believer::Base
     primary_key :artist_name, :name
 end
 
-album_sales = AlbumSales.new
+album_sales = AlbumSales.new(
 album_sales.sales # Returns a Believer::Counter, with a value of 0
 album_sales.sales.incr # Increment counter by 1, value is 1
 album_sales.sales.incr(6) # Increment counter by 3, value is 7
 album_sales.sales.decr # Decrement counter by 1, value is 6
 album_sales.sales.decr(3) # Decrement counter by 3, value is 3
-album_sales.sales.reset! # Reset it to the initial value, which is 0
+album_sales.sales.undo_changes! # Reset it to the initial value, which is 0
 album_sales.sales = 4 # Explicitly set the value...
 album_sales.sales.to_i # ...which is now 4
+album_sales.save
+
+album_sales.sales.reset! # Reset the counter value to 0
+album_sales.save
+album_sales.sales == 0 # True
 ```
 
 #### The primary_key class method

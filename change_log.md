@@ -51,3 +51,8 @@
 
 # 0.2.13
 - pluck method bugfix
+
+# 0.2.14
+- Added a more efficient any? method to the Query interface
+- Renamed Counter reset! method to undo_changes!
+- Counter reset! method sets the counter to 0
