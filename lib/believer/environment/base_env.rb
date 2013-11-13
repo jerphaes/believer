@@ -78,38 +78,6 @@ module Believer
         connection
       end
 
-      def drop_keyspace
-        conn = create_connection(:connect_to_keyspace => false)
-        conn.execute("DROP KEYSPACE #{connection_configuration[:keyspace]}")
-      end
-
-      def create_keyspace(properties = {}, connection = nil)
-        conn = connection || create_connection(:connect_to_keyspace => false)
-
-        default_properties = {:replication => {:class => 'SimpleStrategy', :replication_factor => 1}}
-        ks_props = default_properties.merge(properties)
-
-        ks_props_s = ks_props.keys.map { |k|
-          v = ks_props[k]
-          v_s = nil
-          if v.is_a?(Hash)
-            v_s = v.to_json.gsub(/\"/) { |m| "'" }
-          elsif v.is_a?(String)
-            v_s = "'#{v}'"
-          else
-            v_s = v.to_s
-          end
-          "#{k} = #{v_s}"
-        }.join("\nAND ")
-
-        ks_def = <<-KS_DEF
-          CREATE KEYSPACE #{connection_configuration[:keyspace]}
-          WITH #{ks_props_s}
-        KS_DEF
-
-        conn.execute(ks_def)
-      end
-
     end
 
   end

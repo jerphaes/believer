@@ -334,6 +334,5 @@ This module will implement an after(:each) hook, which deletes all Believer::Bas
 of the test.
 
 
-
 ## Class documentation
 For API go [here](http://rubydoc.info/gems/believer/frames).
