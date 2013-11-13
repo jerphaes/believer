@@ -38,5 +38,24 @@ module Believer
       return nil
     end
 
+    def to_cql_properties(properties)
+      return '' if properties.nil? || properties.empty?
+
+      props_s = properties.keys.map { |k|
+        v = properties[k]
+        v_s = nil
+        if v.is_a?(Hash)
+          v_s = v.to_json.gsub(/\"/) { |m| "'" }
+        elsif v.is_a?(String)
+          v_s = "'#{v}'"
+        else
+          v_s = v.to_s
+        end
+        "#{k} = #{v_s}"
+      }.join("\nAND ")
+
+      props_s
+    end
+
   end
 end

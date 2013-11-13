@@ -9,8 +9,8 @@ module Believer
         ::Believer::DropTable.new(:record_class => self).execute
       end
 
-      def create_table
-        ::Believer::CreateTable.new(:record_class => self).execute
+      def create_table(properties = {})
+        ::Believer::CreateTable.new(:record_class => self, :table_properties => properties).execute
       end
 
     end

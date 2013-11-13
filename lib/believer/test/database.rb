@@ -11,14 +11,15 @@ module Believer
 
         connection = env.create_connection(:connect_to_keyspace => false)
 
+        keyspace = ::Believer::KeySpace.new(env)
         # First delete the existing keyspace
         begin
           puts "Dropping keyspace"
-          env.drop_keyspace
+          keyspace.drop
         rescue Cql::QueryError
         end
 
-        env.create_keyspace({}, connection)
+        keyspace.create({})
         connection.use(env.connection_configuration[:keyspace])
 
         classes = options[:classes]

@@ -1,5 +1,8 @@
 module Believer
   class CreateTable < Command
+    include CqlHelper
+
+    attr_accessor :table_properties
 
     def to_cql
       keys = []
@@ -17,6 +20,11 @@ module Believer
       s << ",\n"
       s << "PRIMARY KEY (#{keys.join(',')})"
       s << "\n)"
+
+      unless table_properties.nil? || table_properties.empty?
+        s << " WITH #{to_cql_properties(table_properties)}"
+      end
+
       s
     end
 
