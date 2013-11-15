@@ -43,8 +43,7 @@ module Believer
     def any?
       return loaded_objects.any? unless loaded_objects.nil?
       q = clone
-      q.limit(1)
-      q.count > 0
+      q.limit(1).count > 0
     end
   end
 end
