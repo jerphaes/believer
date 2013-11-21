@@ -20,9 +20,16 @@ module Believer
       }
 
       # Creates a new environment using the provided configuration
-      # @param config [Hash] the configuration
+      # @param config [Object] the configuration. If it's a hash use it as the configuration. If it's a String, assume
+      # it's a YAML file and load it as a Hash
       def initialize(config = nil)
-        @configuration = config.dup unless config.nil?
+        unless config.nil?
+          if config.is_a?(Hash)
+            @configuration = config.dup
+          elsif config.is_a?(String)
+            @configuration = load_config_from_file(config)
+          end
+        end
       end
 
       def logger
@@ -81,6 +88,14 @@ module Believer
           connection = Cql::Client.connect(cc_no_keyspace)
         end
         connection
+      end
+
+      protected
+      def load_config_from_file(config_file)
+        return nil if config_file.nil?
+        cfg = HashWithIndifferentAccess.new(YAML::load(File.open(config_file.to_s)))
+        puts "Loaded config from file #{config_file.to_s}: #{cfg}"
+        cfg
       end
 
     end

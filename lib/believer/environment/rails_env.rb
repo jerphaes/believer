@@ -9,7 +9,7 @@ module Believer
 
       def load_configuration
         config_file = File.join(Rails.root, 'config', 'believer.yml')
-        config = HashWithIndifferentAccess.new(YAML::load(File.open(config_file.to_s)))
+        config = load_config_from_file(config_file)
         env_config = config[Rails.env]
         env_config
       end

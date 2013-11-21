@@ -22,7 +22,9 @@ module Believer
         keyspace.create({})
         connection.use(env.connection_configuration[:keyspace])
 
-        classes = options[:classes]
+        ::Believer::Base.environment = env
+
+            classes = options[:classes]
         classes.each do |cl|
           if cl.is_a?(String)
             clazz = cl.split('::').inject(Kernel) { |scope, const_name| scope.const_get(const_name) }

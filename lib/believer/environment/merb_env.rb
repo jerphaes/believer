@@ -9,7 +9,7 @@ module Believer
 
       def load_configuration
         config_file = File.join(Merb.root, 'config', 'believer.yml')
-        config = HashWithIndifferentAccess.new(YAML::load(File.open(config_file.to_s)))
+        config = load_config_from_file(config_file)
         env_config = config[Merb.environment]
         env_config
       end

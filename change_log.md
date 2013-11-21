@@ -62,3 +62,6 @@
 
 # 0.2.16
 - Small bugfixes
+
+# 0.2.17
+- Environment improvements
