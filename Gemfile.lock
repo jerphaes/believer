@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    believer (0.2.17)
+    believer (0.2.18)
       activemodel
       connection_pool
       cql-rb

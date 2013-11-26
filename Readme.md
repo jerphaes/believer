@@ -173,6 +173,12 @@ Album.allow_filtering(true) # -> SELECT * FROM albums ALLOW FILTERING
 Album.allow_filtering(false) # -> SELECT * FROM albums
 ```
 
+#### Query methods
+All query instances are decorated with a few data manipulation methods:
+* update_all(values): updates all objects returned by the query with the given values
+* destroy_all: destroys all objects returned by the query. This first loads the object before deleting, allowing callbacks to be called.
+* destroy_all: directly deletes rows the query references. No object are loaded.
+
 #### Method chaining
 All query methods can be chained.
 This is done by creating and returning a clone of the receiver. The clone is the receiver of the query method.
