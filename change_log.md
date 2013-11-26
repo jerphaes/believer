@@ -65,3 +65,6 @@
 
 # 0.2.17
 - Environment improvements
+
+# 0.2.18
+- Added method update_all to query
