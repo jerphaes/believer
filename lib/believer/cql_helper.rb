@@ -11,15 +11,11 @@ module Believer
     # @param value [Object] the value to convert
     def to_cql_literal(value)
       return 'NULL' if value.nil?
-      return "'#{value}'" if value.is_a?(String)
+      return "'#{escape_special_chars(value)}'" if value.is_a?(String)
       return "'#{value}'" if value.is_a?(Symbol)
       return "#{value}" if value.is_a?(Numeric)
       return "'#{value.strftime(CQL_TIMESTAMP_FORMAT)}'" if value.is_a?(Time) || value.is_a?(DateTime)
       #return "#{value.to_i * 1000}" if value.is_a?(Time) || value.is_a?(DateTime)
-
-      if value.is_a?(Counter)
-
-      end
 
       # Set
       if value.is_a?(Set)
@@ -45,16 +41,21 @@ module Believer
         v = properties[k]
         v_s = nil
         if v.is_a?(Hash)
+          v.each {|k, val| v[k] = escape_special_chars(val) if val.is_a?(String)}
           v_s = v.to_json.gsub(/\"/) { |m| "'" }
         elsif v.is_a?(String)
-          v_s = "'#{v}'"
+          v_s = "'#{escape_special_chars(v)}'"
         else
-          v_s = v.to_s
+          v_s = escape_special_chars(v.to_s)
         end
         "#{k} = #{v_s}"
       }.join("\nAND ")
 
       props_s
+    end
+
+    def escape_special_chars(v)
+      v.gsub("'", "''")
     end
 
   end

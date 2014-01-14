@@ -94,7 +94,7 @@ module Believer
       def load_config_from_file(config_file)
         return nil if config_file.nil?
         cfg = HashWithIndifferentAccess.new(YAML::load(File.open(config_file.to_s)))
-        puts "Loaded config from file #{config_file.to_s}: #{cfg}"
+        #puts "Loaded config from file #{config_file.to_s}: #{cfg}"
         cfg
       end
 
