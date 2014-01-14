@@ -24,12 +24,6 @@ describe Believer::Query do
 
   end
 
-  it 'should escape string literals' do
-    q = Believer::Query.new(:record_class => Test::Album)
-    q = q.select(:name).where(:name => "'quote!")
-    expect(q.to_cql).to eql "SELECT name FROM albums WHERE name = '''quote!'"
-  end
-
   it 'create simple statement' do
     q = Believer::Query.new(:record_class => Test::Album)
     q = q.select(:name).

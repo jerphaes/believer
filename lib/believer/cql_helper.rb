@@ -58,5 +58,9 @@ module Believer
       v.gsub("'", "''")
     end
 
+    def to_hex_literal(s)
+      s.unpack('U'*s.length).map {|i|i.to_s(16)}.join()
+    end
+
   end
 end

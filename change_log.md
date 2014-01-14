@@ -69,5 +69,5 @@
 # 0.2.18
 - Added method update_all to query
 
-# 0.2.19
+# 0.2.19 + 0.2.20
 - Escape of quote character
