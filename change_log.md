@@ -71,3 +71,6 @@
 
 # 0.2.19 + 0.2.20
 - Escape of quote character
+
+# 0.2.21
+- Added delete method on models

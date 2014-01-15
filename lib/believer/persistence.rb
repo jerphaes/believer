@@ -35,9 +35,14 @@ module Believer
 
     # Destroys the model.
     def destroy
-      res = Delete.new(:record_class => self.class).where(key_values).execute
+      res = self.delete
       @persisted = false
       res
+    end
+
+    # Deletes the Cassandra row.
+    def delete
+      Delete.new(:record_class => self.class).where(key_values).execute
     end
 
     def persisted!
