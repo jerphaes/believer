@@ -82,11 +82,6 @@ describe Believer::Query do
       fail
     rescue Exception => e
     end
-    begin
-      q.pluck(:name, :artist_xxx)
-      fail
-    rescue Exception => e
-    end
   end
 
 end

@@ -2,7 +2,12 @@ module Believer
   module ActAsEnumerable
 
     def self.included(base)
-      base.delegate *(Enumerable.instance_methods(false).map {|enum_method| enum_method.to_sym}), :to => :to_a
+      methods_not_delegated_to_array = [:first, :last, :any?, :exists?, :count]
+      enumerable_delegate_methods = Enumerable.instance_methods(false).map { |enum_method|
+        enum_method.to_sym
+      } - methods_not_delegated_to_array
+
+      base.delegate *enumerable_delegate_methods, :to => :to_a
       base.delegate :each, :size, :[], :to => :to_a
     end
 

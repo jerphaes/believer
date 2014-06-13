@@ -45,7 +45,7 @@ module Believer
             #  exec_opts ||= {}
             #  exec_opts[:consistency] = consistency_level
             #end
-            exec_opts = (execution_options.nil? || execution_options.empty?) ? nil : execution_options
+            exec_opts = execution_options || {}
             begin
               return connection.execute(cql, exec_opts)
             rescue Cql::NotConnectedError => not_connected
