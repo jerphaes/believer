@@ -1,13 +1,30 @@
 module Believer
   class Command
 
-    attr_accessor :record_class, :consistency_level, :execution_options
+    attr_accessor :record_class, :consistency_level
 
     def initialize(attrs = {})
       attrs.each do |name, value|
         send("#{name}=", value)
       end if attrs.present?
       #@instrumenter = ActiveSupport::Notifications.instrumenter
+    end
+
+    def execution_options
+      @execution_options ||= {}
+      exec_global_opts = ::Believer::Base.environment.believer_configuration[:execution]
+      unless exec_global_opts.nil?
+        @execution_options.merge!(exec_global_opts.symbolize_keys)
+      end
+      @execution_options
+    end
+
+    def execution_options=(opts)
+      execution_options.merge!(opts)
+    end
+
+    def override_execution_options(opts = {})
+      @execution_options = opts
     end
 
     def clone
@@ -45,7 +62,7 @@ module Believer
             #  exec_opts ||= {}
             #  exec_opts[:consistency] = consistency_level
             #end
-            exec_opts = execution_options || {}
+            exec_opts = execution_options
             begin
               return connection.execute(cql, exec_opts)
             rescue Cql::NotConnectedError => not_connected

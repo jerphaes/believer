@@ -74,3 +74,6 @@
 
 # 0.2.21
 - Added delete method on models
+
+# 0.2.24
+- Added functionality to specify default execution options in configuration file

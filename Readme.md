@@ -230,9 +230,13 @@ development:
 ```
 ### Believer configuration
 The Believer exposes some configuration options. These can added in a 'believer' node of the configuration hash.
-For now only the logging is configurable.
+Supported are options for logging, connection pooling and CQL command execution.
 
-Some examples:
+The connection pool options are those that are sent to the ConnectionPool.new constructor (from the connection_pool gem).
+
+The command execution options are those which are sent to the Cql::Client.execute method of the cql-rb gem.
+
+Some examples of logging options:
 
 ``` yaml
 development:
